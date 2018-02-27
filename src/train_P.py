@@ -21,7 +21,8 @@ def train_step(sess, dataset, sequence_number, model, dropout_rate=0.5):
       model.input_token_character_indices: dataset.character_indices_padded['train'][sequence_number],
       model.input_token_lengths: dataset.token_lengths['train'][sequence_number],
       model.input_label_indices_flat: dataset.label_indices['train'][sequence_number],
-      model.dropout_keep_prob: 1-dropout_rate
+      model.dropout_keep_prob: 1-dropout_rate,
+      model.input_token_patterns : dataset.token_patterns['train'][sequence_number]
     }
     _, _, loss, accuracy, transition_params_trained = sess.run(
                     [model.train_op, model.global_step, model.loss, model.accuracy, model.transition_parameters],
@@ -49,7 +50,8 @@ def prediction_step(sess, dataset, dataset_type, model, transition_params_traine
           model.input_token_character_indices: dataset.character_indices_padded[dataset_type][i],
           model.input_token_lengths: dataset.token_lengths[dataset_type][i],
           model.input_label_indices_vector: dataset.label_vector_indices[dataset_type][i],
-          model.dropout_keep_prob: 1.
+          model.dropout_keep_prob: 1.,
+          model.input_token_patterns : dataset.token_patterns[dataset_type][i]
         }
         unary_scores, predictions = sess.run([model.unary_scores, model.predictions], feed_dict)
         # if use_crf:
