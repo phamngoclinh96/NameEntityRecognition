@@ -9,11 +9,6 @@ import json
 from pycorenlp import StanfordCoreNLP
 
 
-def get_start_and_end_offset_of_token_from_spacy(token):
-    start = token.idx
-    end = start + len(token)
-    return start, end
-
 
 def get_sentences_and_tokens_from_spacy(text, spacy_nlp):
     document = spacy_nlp(text)
@@ -24,7 +19,8 @@ def get_sentences_and_tokens_from_spacy(text, spacy_nlp):
         sentence_tokens = []
         for token in sentence:
             token_dict = {}
-            token_dict['start'], token_dict['end'] = get_start_and_end_offset_of_token_from_spacy(token)
+            token_dict['start'] = token.idx
+            token_dict['end'] = token.idx + len(token)
             token_dict['text'] = text[token_dict['start']:token_dict['end']]
             if token_dict['text'].strip() in ['\n', '\t', ' ', '']:
                 continue
