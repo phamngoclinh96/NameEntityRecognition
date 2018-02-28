@@ -294,8 +294,7 @@ def get_valid_dataset_filepaths(parameters, dataset_types=['train', 'valid', 'te
                                                                                    dataset_type])
                 else:
                     # Populate conll file based on brat files
-                    brat2conll.brat_to_conll(dataset_brat_folders[dataset_type], dataset_filepath_for_tokenizer,
-                                             parameters['tokenizer'], parameters['spacylanguage'])
+                    brat2conll.brat_to_conll(dataset_brat_folders[dataset_type], dataset_filepath_for_tokenizer)
                 dataset_filepaths[dataset_type] = dataset_filepath_for_tokenizer
 
             # Brat text files do not exist

@@ -123,7 +123,7 @@ def check_brat_annotation_and_text_compatibility(brat_folder):
     print("Done.")
 
 
-def brat_to_conll(input_folder, output_filepath, tokenizer, language):
+def brat_to_conll(input_folder, output_filepath):
     '''
     Assumes '.txt' and '.ann' files are in the input_folder.
     Checks for the compatibility between .txt and .ann at the same time.
