@@ -1,0 +1,39 @@
+This temp_00000 0 4 O
+text temp_00000 5 9 O
+was temp_00000 10 13 O
+written temp_00000 14 21 O
+in temp_00000 22 24 O
+the temp_00000 25 28 O
+United temp_00000 29 35 O
+States temp_00000 36 42 O
+. temp_00000 42 43 O
+
+It temp_00000 44 46 O
+demonstrates temp_00000 47 59 O
+how temp_00000 60 63 O
+to temp_00000 64 66 O
+use temp_00000 67 70 O
+NeuroNER temp_00000 71 79 O
+with temp_00000 80 84 O
+unannotated temp_00000 85 96 O
+texts temp_00000 97 102 O
+. temp_00000 102 103 O
+
+Joe temp_00000 104 107 O
+, temp_00000 107 108 O
+whom temp_00000 109 113 O
+I temp_00000 114 115 O
+recently temp_00000 116 124 O
+met temp_00000 125 128 O
+in temp_00000 129 131 O
+Boston temp_00000 132 138 O
+, temp_00000 138 139 O
+told temp_00000 140 144 O
+me temp_00000 145 147 O
+it temp_00000 148 150 O
+was temp_00000 151 154 O
+easy temp_00000 155 159 O
+to temp_00000 160 162 O
+use temp_00000 163 166 O
+. temp_00000 166 167 O
+
