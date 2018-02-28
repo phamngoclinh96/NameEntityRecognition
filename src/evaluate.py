@@ -83,3 +83,6 @@ def remap_labels(y_pred, y_true, dataset, evaluation_mode='bio'):
 
     return new_y_pred, new_y_true, new_label_indices, new_label_names, new_label_indices_with_o, new_label_names_with_o
 
+
+def evaluate_model(y_true,y_predict,dataset):
+    print('')

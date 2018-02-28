@@ -215,8 +215,7 @@ class BLSTM_CRF(object):
         self.define_training_procedure(learning_rate=learning_rate, gradient_clipping_value=gradient_clipping_value,
                                        optimizer=optimizer)
         self.summary_op = tf.summary.merge_all()
-        self.saver = tf.train.Saver(
-            max_to_keep=maximum_number_of_epochs)  # defaults to saving all variables
+        self.saver = tf.train.Saver(max_to_keep=maximum_number_of_epochs)  # defaults to saving all variables
 
     def define_training_procedure(self, learning_rate, gradient_clipping_value, optimizer='sgd'):
         # Define training procedure

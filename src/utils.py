@@ -286,8 +286,7 @@ def get_valid_dataset_filepaths(parameters, dataset_types=['train', 'valid', 'te
             if os.path.exists(dataset_brat_folders[dataset_type]) and len(
                     glob.glob(os.path.join(dataset_brat_folders[dataset_type], '*.txt'))) > 0:
                 dataset_filepath_for_tokenizer = os.path.join(parameters['dataset_text_folder'],
-                                                              '{0}_{1}.txt'.format(dataset_type,
-                                                                                   parameters['tokenizer']))
+                                                              '{0}.txt'.format(dataset_type))
                 if os.path.exists(dataset_filepath_for_tokenizer):
                     conll2brat.check_compatibility_between_conll_and_brat_text(dataset_filepath_for_tokenizer,
                                                                                dataset_brat_folders[
