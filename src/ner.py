@@ -191,14 +191,33 @@ class NER(object):
                                                   self.transition_params_trained)
         # predictions, _, output_filepaths[dataset_type] = prediction_output
         print(prediction_output)
+        tokens=[]
+        entitys=[]
         for i,sentence in enumerate(prediction_output):
             token = ''
+            previous_label= 'O'
             for j,label in enumerate(sentence):
                 if label!= 'O':
                     label = label.split('-')
                     prefix = label[0]
-                    entity = label[1]
+                    if prefix == 'B' or previous_label != label[1]:
+                        if previous_label != 'O':
+                            tokens.append(token)
+                            entitys.append(previous_label)
+                            token = ''
+                        previous_label = label[1]
+                        token = self.dataset.index_to_token[self.dataset.token_indices[dataset_type][i][j]]
+                    else:
+                        token = token + ' ' + self.dataset.index_to_token[self.dataset.token_indices[dataset_type][i][j]]
+
+                else:
+                    if previous_label != 'O':
+                        tokens.append(token)
+                        entitys.append(previous_label)
+                        token=''
+                    previous_label = 'O'
 
 
-        return prediction_output
+
+        return prediction_output , tokens,entitys
         # print([self.dataset.index_to_label[prediction] for prediction in predictions])
