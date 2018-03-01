@@ -182,3 +182,23 @@ class NER(object):
         assert (text == text2)
         return entities
 
+    def quick_predict(self,text,folder='../deploy'):
+        dataset_type = self.dataset.create_deploy_set(text)
+
+        # Predict labels and output brat
+        # output_filepaths = {}
+        prediction_output = train.prediction(self.sess, self.dataset, dataset_type, self.model,
+                                                  self.transition_params_trained)
+        # predictions, _, output_filepaths[dataset_type] = prediction_output
+        print(prediction_output)
+        for i,sentence in enumerate(prediction_output):
+            token = ''
+            for j,label in enumerate(sentence):
+                if label!= 'O':
+                    label = label.split('-')
+                    prefix = label[0]
+                    entity = label[1]
+
+
+        return prediction_output
+        # print([self.dataset.index_to_label[prediction] for prediction in predictions])

@@ -1,4 +1,7 @@
+import en_core_web_sm
 import sklearn.preprocessing
+
+import brat2conll
 import utils
 import collections
 import codecs
@@ -153,6 +156,42 @@ class DatasetP(object):
         self.token_lengths.update(token_lengths)
         self.characters.update(characters)
         self.label_vector_indices.update(label_vector_indices)
+
+
+    def create_deploy_set(self,text):
+        spacy_nlp = en_core_web_sm.load()
+        sentences = brat2conll.get_sentences_and_tokens_from_spacy(text, spacy_nlp)
+
+        tokens = []
+        labels = []
+        patterns = []
+        data_type = 'deployset'
+        for sentence in sentences:
+            new_token_sequence = []
+            new_label_sequence = []
+            new_pattern_sequence = []
+            for token in sentence:
+                new_token_sequence.append(token['text'])
+                new_label_sequence.append('O')
+                new_pattern_sequence.append(utils_re.get_pattern(token['text']))
+
+            tokens.append(new_token_sequence)
+            labels.append(new_label_sequence)
+            patterns.append(new_pattern_sequence)
+        self.tokens[data_type] = tokens
+        self.labels[data_type] = labels
+        self.token_patterns[data_type] =patterns
+
+        token_indices, label_indices, character_indices_padded, character_indices, token_lengths, characters, label_vector_indices = self._convert_to_indices([data_type])
+
+        self.token_indices.update(token_indices)
+        self.label_indices.update(label_indices)
+        self.character_indices_padded.update(character_indices_padded)
+        self.character_indices.update(character_indices)
+        self.token_lengths.update(token_lengths)
+        self.characters.update(characters)
+        self.label_vector_indices.update(label_vector_indices)
+        return data_type
 
     def load_dataset(self, dataset_filepaths, parameters, token_to_vector=None):
         '''
