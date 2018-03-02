@@ -1,3 +1,5 @@
+import en_core_web_sm
+
 import train_P as train
 import tensorflow as tf
 from tensorflow.contrib.tensorboard.plugins import projector
@@ -26,13 +28,17 @@ from BLSTM_CRF_P import BLSTM_CRF
 
 
 class NER(object):
-    def __init__(self,parameters):
+    def __init__(self,parameters,dataset = None,token_to_vector=None):
         # Initial
         self.prediction_count=0
+        self.nlp = en_core_web_sm.load()
         # Load dataset
-        self.dataset_filepaths, dataset_brat_folders = utils.get_valid_dataset_filepaths(parameters)
-        self.dataset = ds.DatasetP(verbose=False, debug=False)
-        token_to_vector = self.dataset.load_dataset(self.dataset_filepaths, parameters)
+        if dataset == None:
+            self.dataset_filepaths, dataset_brat_folders = utils.get_valid_dataset_filepaths(parameters)
+            self.dataset = ds.DatasetP(verbose=False, debug=False)
+            token_to_vector = self.dataset.load_dataset(self.dataset_filepaths, parameters)
+        else:
+            self.dataset = dataset
 
         # Create model lstm+crf
         session_conf = tf.ConfigProto(
@@ -79,21 +85,11 @@ class NER(object):
                                                                         token_to_vector=None)
 
     def train(self,parameters,number_of_epoch,model_folder):
-        stats_graph_folder, experiment_timestamp = utils.create_stats_graph_folder(parameters)
+        # stats_graph_folder, experiment_timestamp = utils.create_stats_graph_folder(parameters)
 
         # Initialize and save execution details
         start_time = time.time()
-        # results = {}
-        # results['epoch'] = {}
-        # results['execution_details'] = {}
-        # results['execution_details']['train_start'] = start_time
-        # results['execution_details']['time_stamp'] = experiment_timestamp
-        # results['execution_details']['early_stop'] = False
-        # results['execution_details']['keyboard_interrupt'] = False
-        # results['execution_details']['num_epochs'] = 0
-        # results['model_options'] = copy.copy(parameters)
 
-        # model_folder = os.path.join(stats_graph_folder, 'model')
         utils.create_folder_if_not_exists(model_folder)
 
         pickle.dump(self.dataset, open(os.path.join(model_folder, 'dataset.pickle'), 'wb'))
@@ -123,17 +119,18 @@ class NER(object):
 
             epoch_elapsed_training_time = time.time() - epoch_start_time
             print('Training completed in {0:.2f} seconds'.format(epoch_elapsed_training_time), flush=True)
-
-            y_pred, y_true, output_filepaths = train.predict_labels(sess=self.sess, model=self.model,
-                                                                    transition_params_trained=self.transition_params_trained,
-                                                                    dataset=self.dataset, epoch_number=epoch_number,
-                                                                    stats_graph_folder=stats_graph_folder,
-                                                                    dataset_filepaths=self.dataset_filepaths,
-                                                                    tagging_format=parameters['tagging_format'])
-
+            f1_score ={}
+            for data_type in ['train', 'valid', 'test']:
+                if data_type not in self.dataset.label_indices.keys():
+                    continue
+                _,_,f1_score[data_type] = train.evaluate_step(sess=self.sess,dataset_type=data_type, dataset=self.dataset, model=self.model,
+                                transition_params_trained=self.transition_params_trained,
+                                tagging_format=parameters['tagging_format'])
             #     if epoch_number % 3 ==0:
             self.model.saver.save(self.sess, os.path.join(model_folder, 'model.ckpt'))
-
+            if f1_score['valid'] - previous_best_valid_f1_score < 0.1:
+                break
+            previous_best_valid_f1_score =f1_score['valid']
             if epoch_number > number_of_epoch:
                 break
 
@@ -182,20 +179,22 @@ class NER(object):
         assert (text == text2)
         return entities
 
-    def quick_predict(self,text,folder='../deploy'):
-        dataset_type = self.dataset.create_deploy_set(text)
+    def quick_predict(self,text):
+        sentences = brat2conll.get_sentences_and_tokens_from_spacy(text, self.nlp)
+        dataset_type = self.dataset.create_deploy_set(sentences)
 
         # Predict labels and output brat
         # output_filepaths = {}
         prediction_output = train.prediction(self.sess, self.dataset, dataset_type, self.model,
                                                   self.transition_params_trained)
         # predictions, _, output_filepaths[dataset_type] = prediction_output
-        print(prediction_output)
+        # print(prediction_output)
         tokens=[]
         entitys=[]
         for i,sentence in enumerate(prediction_output):
             token = ''
             previous_label= 'O'
+            sentence = utils_nlp.bioes_to_bio(sentence)
             for j,label in enumerate(sentence):
                 if label!= 'O':
                     label = label.split('-')
@@ -206,9 +205,9 @@ class NER(object):
                             entitys.append(previous_label)
                             token = ''
                         previous_label = label[1]
-                        token = self.dataset.index_to_token[self.dataset.token_indices[dataset_type][i][j]]
+                        token = sentences[i][j]['text']  #self.dataset.index_to_token[self.dataset.token_indices[dataset_type][i][j]]
                     else:
-                        token = token + ' ' + self.dataset.index_to_token[self.dataset.token_indices[dataset_type][i][j]]
+                        token = token + ' ' + sentences[i][j]['text'] # self.dataset.index_to_token[self.dataset.token_indices[dataset_type][i][j]]
 
                 else:
                     if previous_label != 'O':
@@ -219,5 +218,5 @@ class NER(object):
 
 
 
-        return prediction_output , tokens,entitys
+        return prediction_output , list(zip(tokens,entitys))
         # print([self.dataset.index_to_label[prediction] for prediction in predictions])

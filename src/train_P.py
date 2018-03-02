@@ -155,6 +155,7 @@ def prediction(sess, dataset, dataset_type, model, transition_params_trained,tag
             prediction_labels = utils_nlp.bioes_to_bio(prediction_labels)
 
         all_predictions.append(prediction_labels)
+
             # gold_labels = utils_nlp.bioes_to_bio(gold_labels)
     #     for prediction, token, gold_label in zip(prediction_labels, dataset.tokens[dataset_type][i], gold_labels):
     #         while True:
@@ -191,3 +192,59 @@ def prediction(sess, dataset, dataset_type, model, transition_params_trained,tag
     #                                              target_names=labels))
     return all_predictions  #, all_y_true, output_filepath
 
+def evaluate_step(sess, dataset, dataset_type, model, transition_params_trained,tagging_format):
+    if dataset_type == 'deploy':
+        print('Predict labels for the {0} set'.format(dataset_type))
+    else:
+        print('Evaluate model on the {0} set'.format(dataset_type))
+    all_predictions = []
+    all_y_true = []
+    # output_filepath = os.path.join(stats_graph_folder, '{1:03d}_{0}.txt'.format(dataset_type,epoch_number))
+    # output_file = codecs.open(output_filepath, 'w', 'UTF-8')
+    # original_conll_file = codecs.open(dataset_filepaths[dataset_type], 'r', 'UTF-8')
+
+    for i in range(len(dataset.token_indices[dataset_type])):
+        feed_dict = {
+          model.input_token_indices: dataset.token_indices[dataset_type][i],
+          model.input_token_character_indices: dataset.character_indices_padded[dataset_type][i],
+          model.input_token_lengths: dataset.token_lengths[dataset_type][i],
+          model.input_label_indices_vector: dataset.label_vector_indices[dataset_type][i],
+          model.dropout_keep_prob: 1.,
+          model.input_token_patterns : dataset.token_patterns[dataset_type][i]
+        }
+        unary_scores, predictions = sess.run([model.unary_scores, model.predictions], feed_dict)
+        # if use_crf:
+        #     predictions, _ = tf.contrib.crf.viterbi_decode(unary_scores, transition_params_trained)
+        #     predictions = predictions[1:-1]
+        # else:
+        #     predictions = predictions.tolist()
+        predictions, _ = tf.contrib.crf.viterbi_decode(unary_scores, transition_params_trained)
+        predictions = predictions[1:-1]
+
+        assert(len(predictions) == len(dataset.tokens[dataset_type][i]))
+
+        prediction_labels = [dataset.index_to_label[prediction] for prediction in predictions]
+        gold_labels = dataset.labels[dataset_type][i]
+        if tagging_format == 'bioes':
+            prediction_labels = utils_nlp.bioes_to_bio(prediction_labels)
+            gold_labels = utils_nlp.bioes_to_bio(gold_labels)
+
+
+        all_predictions.extend(prediction_labels)
+        all_y_true.extend(gold_labels)
+
+    # output_file.close()
+    # original_conll_file.close()
+
+    new_y_pred=[]
+    new_y_true=[]
+    labels = dataset.unique_labels
+    for i in range(len(all_y_true)):
+        if all_y_true[i] != 'O' or all_predictions[i] != 'O':
+            new_y_pred.append(all_predictions[i])
+            new_y_true.append(all_y_true[i])
+    f1_score = float(sklearn.metrics.classification_report(new_y_true, new_y_pred, digits=4).split('\t')[-2])
+    print('F1-score',f1_score) #labels=dataset.index_to_label,
+                                                 # target_names=labels))
+
+    return all_predictions, all_y_true , f1_score

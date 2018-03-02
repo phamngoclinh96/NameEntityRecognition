@@ -158,9 +158,9 @@ class DatasetP(object):
         self.label_vector_indices.update(label_vector_indices)
 
 
-    def create_deploy_set(self,text):
-        spacy_nlp = en_core_web_sm.load()
-        sentences = brat2conll.get_sentences_and_tokens_from_spacy(text, spacy_nlp)
+    def create_deploy_set(self,sentences):
+        # spacy_nlp = en_core_web_sm.load()
+
 
         tokens = []
         labels = []
