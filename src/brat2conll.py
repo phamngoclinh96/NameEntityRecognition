@@ -2,11 +2,10 @@
 import os
 import glob
 import codecs
-import spacy
+
 import en_core_web_sm
 import utils_nlp
-import json
-from pycorenlp import StanfordCoreNLP
+
 
 
 

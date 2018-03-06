@@ -249,14 +249,14 @@ def load_parameters(parameters_filepath, arguments={}, verbose=True):
     return parameters, conf_parameters
 
 
-def get_valid_dataset_filepaths(parameters, dataset_types=['train', 'valid', 'test', 'deploy']):
+def get_valid_dataset_filepaths(dataset_text_folder,tagging_format = 'bioes', dataset_types=['train', 'valid', 'test', 'deploy']):
     dataset_filepaths = {}
     dataset_brat_folders = {}
     for dataset_type in dataset_types:
-        dataset_filepaths[dataset_type] = os.path.join(parameters['dataset_text_folder'],
+        dataset_filepaths[dataset_type] = os.path.join(dataset_text_folder,
                                                        '{0}.txt'.format(dataset_type))
-        dataset_brat_folders[dataset_type] = os.path.join(parameters['dataset_text_folder'], dataset_type)
-        dataset_compatible_with_brat_filepath = os.path.join(parameters['dataset_text_folder'],
+        dataset_brat_folders[dataset_type] = os.path.join(dataset_text_folder, dataset_type)
+        dataset_compatible_with_brat_filepath = os.path.join(dataset_text_folder,
                                                              '{0}_compatible_with_brat.txt'.format(dataset_type))
 
         # Conll file exists
@@ -285,7 +285,7 @@ def get_valid_dataset_filepaths(parameters, dataset_types=['train', 'valid', 'te
             # Brat text files exist
             if os.path.exists(dataset_brat_folders[dataset_type]) and len(
                     glob.glob(os.path.join(dataset_brat_folders[dataset_type], '*.txt'))) > 0:
-                dataset_filepath_for_tokenizer = os.path.join(parameters['dataset_text_folder'],
+                dataset_filepath_for_tokenizer = os.path.join(dataset_text_folder,
                                                               '{0}.txt'.format(dataset_type))
                 if os.path.exists(dataset_filepath_for_tokenizer):
                     conll2brat.check_compatibility_between_conll_and_brat_text(dataset_filepath_for_tokenizer,
@@ -302,9 +302,9 @@ def get_valid_dataset_filepaths(parameters, dataset_types=['train', 'valid', 'te
                 del dataset_brat_folders[dataset_type]
                 continue
 
-        if parameters['tagging_format'] == 'bioes':
+        if tagging_format == 'bioes':
             # Generate conll file with BIOES format
-            bioes_filepath = os.path.join(parameters['dataset_text_folder'], '{0}_bioes.txt'.format(
+            bioes_filepath = os.path.join(dataset_text_folder, '{0}_bioes.txt'.format(
                 get_basename_without_extension(dataset_filepaths[dataset_type])))
             utils_nlp.convert_conll_from_bio_to_bioes(dataset_filepaths[dataset_type], bioes_filepath)
             dataset_filepaths[dataset_type] = bioes_filepath

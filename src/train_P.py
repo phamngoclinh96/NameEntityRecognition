@@ -2,9 +2,7 @@ import os
 import tensorflow as tf
 import numpy as np
 import sklearn.metrics
-from evaluate import remap_labels
-import pickle
-import utils_tf
+
 import codecs
 import utils_nlp
 #from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoint_file
