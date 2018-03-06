@@ -128,9 +128,9 @@ class NER(object):
                                 tagging_format=parameters['tagging_format'])
             #     if epoch_number % 3 ==0:
             self.model.saver.save(self.sess, os.path.join(model_folder, 'model.ckpt'))
-            if f1_score['valid'] - previous_best_valid_f1_score < 0.1:
+            if f1_score['valid'][-2] - previous_best_valid_f1_score < 0.1:
                 break
-            previous_best_valid_f1_score =f1_score['valid']
+            previous_best_valid_f1_score =f1_score['valid'][-2]
             if epoch_number > number_of_epoch:
                 break
 

@@ -243,8 +243,9 @@ def evaluate_step(sess, dataset, dataset_type, model, transition_params_trained,
         if all_y_true[i] != 'O' or all_predictions[i] != 'O':
             new_y_pred.append(all_predictions[i])
             new_y_true.append(all_y_true[i])
-    f1_score = float(sklearn.metrics.classification_report(new_y_true, new_y_pred, digits=4).split('\t')[-2])
-    print('F1-score',f1_score) #labels=dataset.index_to_label,
+    report = sklearn.metrics.classification_report(new_y_true, new_y_pred, digits=4)
+    print(report) #labels=dataset.index_to_label,
                                                  # target_names=labels))
 
-    return all_predictions, all_y_true , f1_score
+    report = [t for t in report.split('\n')[-2].split(' ') if len(t)>0][-4:]
+    return all_predictions, all_y_true ,[float(t) for t in report]

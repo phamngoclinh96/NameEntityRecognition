@@ -1,0 +1,131 @@
+Curriculum Vitae
+ Name
+ Le Phuong
+ Nation
+ Vietnam
+ Birth
+ 20th, August 1986
+ Sex
+ Male
+ Address
+ 108 Nguyen Thai Hoc Street, Ba Dinh District,
+Hanoi.
+ Summary
+ • Passionate self-taught iOS Developer with 2 years of experience.
+• Interested in iOS, watchOS, OS X & tvOS app development.
+• Strong interest in the Swift programming language.
+• Curious about product design, product development and product management.
+• Proactive, self-motivated, and result-oriented
+• Strong analytical and problem solving skills
+ Experience
+ iOS Junior Developer.
+ ITSOL JSC.
+ October 2015 – Now
+ At Emotiv, one of the most amazing Silicon Valley startup about bioinformatics using
+electroencephalography to research human brain. I’ve worked with an awesome team,
+builded the iOS apps called “Insights” and “Metal Commands” which allows users to
+wirelessly connect the headset to record and train their brain.
+My mission was maintaining the current iOS SDK and convert to the latest Swift version.
+• Emotiv Insights app link: https://itunes.apple.com/us/app/emotiv-insight/
+id1031805596?mt=8
+• Metal Commands app link: https://itunes.apple.com/us/app/mental-commands/
+id1032682842?mt=8
+• Emotiv SDK github link: https://github.com/Emotiv/ios-sdk
+ iOS Intern.
+ FPT Software
+ June 2015 – September 2015 (3 months)
+ At FPT Software, one of the biggest outsourcing software company in Vietnam. I’ve
+worked with amazing teams from Production teams to Core team. In production teams,
+I’ve worked with many teams full of energized and talent coders. In product teams, I’ve
+learned a lot teamwork skills, tools and strategies. In Core team, I’ve joined as an iOS
+developer with responsibility to write most reused codebase for mobile production teams
+and trained Swift programming for other members.
+• Material controls for iOS github link: https://github.com/fpt-software/Material-
+Controls-For-iOS
+Event Organizer (CSSA) app link: https://itunes.apple.com/au/app/cssa-event-
+organizer/id1026560315?mt=8
+Countdown‼ app link: https://itunes.apple.com/us/app/countdown!!-event-reminders/
+id424216726?mt=8
+ Training Assistant for iOS courses.
+ Techmaster Vietnam
+ December 2014 – May 2015 (6 months)
+ Be retained for teaching assistant at Techmaster, I joined to build content material for
+next online iOS courses by writing slides and making sample apps/games to demonstrate
+programming technique and applied algorithms.
+Mines Sweepers game: https://www.youtube.com/watch?v=od6javBixQg
+Snake game : https://www.youtube.com/watch?v=d0LiBE6aZI0
+Swift Course: https://www.youtube.com/watch?v=sHaLRwkY9HI
+ iOS Fresher Developer
+ Techmaster Vietnam
+ March 2014 – December 2014 (9 months)
+ Studied iOS development and became an iOS developer at Techmaster Vietnam, a best
+and well known for code-camp based training center in Vietnam, with intensive
+curriculum and full pressure training. Directly mentored by Mr Trinh Minh Cuong, and
+become one of the best graduates, and the first Swift generation in iOS developer
+community.
+ Other Projects
+ Freelancer.
+ I am currently working on projects for US and Japanese clients.
+During these projects, I’ve managed to deliver on time every sprint planned. I have also
+had the opportunity to take part in the process of redesigning the app's UX and UI which
+made me to realize that I'm interested in mobile app design as well.
+•
+Presena app link: https://itunes.apple.com/jp/app/presena-puresena/id1077295780?
+l=en&mt=8
+•
+Hubnami app link: https://itunes.apple.com/us/app/hubnami/id1058192543?mt=8
+• WIXI app link: https://itunes.apple.com/WebObjects/MZStore.woa/wa/
+viewSoftware?id=1146738023&mt=8
+ Skills
+ iOS Development
+ •
+•
+•
+•
+•
+ Care about app architectures: MVC, MVC-N, MVC-RS, MVVM,..
+Interested design patterns: Singleton, Pool, Memento, Bride, …
+Deep respect to OOP principles: SOLID, DRY
+Fluent in language: strong focus on Swift, besides Objective-C/C
+Cover IDE features: Xcode, Debugging, Optimization, Instrumenting, Unit Testing,
+CI.
+Databases: CoreData, SQLite, Realm.
+Cocoa frameworks: UIKit, AutoLayout, Storyboards, CoreServices…
+Networking: REST API, OAuth2.0, JSON/XML, HMTL/CSS…
+Coding conventions: Delegation, Protocol, Functional Programming, React.
+Package Manager: Cocoapods, Carthage, Swift Package Manger.
+3rd-party: Alamofire, SwiftyJSON, KeychainAcess, LockSmith, Charts, FBSDK,
+Google API, … Use, customize, create whole new if necessary.
+Source control: GIT, git-flow branching strategy.
+Distribution and issues troubleshooting with AppStore.
+ •
+•
+•
+•
+•
+•
+ •
+•
+ Tools
+ Postman, Google Chrome for inspecting HTTP requests.
+Balsamiq, Sketch, Ninjamocks for mocking up.
+SourceTree, Github, command-line for Git.
+TestFlight, NewRelic, Fabric, Sentry for monitoring and testing.
+Slack, Trello, Moxtra for team communications.
+Asana, PivotalTracker for project tracking.
+ •
+•
+•
+•
+•
+•
+ Language
+ English: good in working for chat/comment/email/report. Fluent speaking in English
+with team mates.
+• Mother tongue: Vietnamese.
+ Education
+ •
+•
+ Techmaster Vietnam. iOS Developer.
+Hanoi University of Science and Technology. Engineer’s degree of Electronics and
+Telecommunications.
