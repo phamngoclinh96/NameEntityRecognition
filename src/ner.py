@@ -1,6 +1,6 @@
 import en_core_web_sm
 
-import train_P as train
+import train
 import tensorflow as tf
 
 import os
@@ -17,7 +17,7 @@ import numpy as np
 import utils_nlp
 import utils
 import utils_data as ds
-from BLSTM_CRF_P import BLSTM_CRF
+from ner_model import BLSTM_CRF
 
 
 def restore_model_trained(parameter_pathfile='',model_pathfile='',dataset_pathfile='',embedding_filepath='',model_folder = ''):
@@ -53,8 +53,8 @@ class NER(object):
         # Load dataset
         if dataset == None:
             self.dataset_filepaths, dataset_brat_folders = utils.get_valid_dataset_filepaths(parameters['dataset_text_folder'])
-            self.dataset = ds.DatasetP(verbose=False, debug=False)
-            token_to_vector = self.dataset.load_dataset(self.dataset_filepaths, parameters, pretraining_dataset=dataset )
+            self.dataset = ds.Dataset(verbose=False, debug=False)
+            token_to_vector = self.dataset.load_dataset(self.dataset_filepaths, parameters['token_pretrained_embedding_filepath'], parameters,load_all_pretrained_token_embeddings = False ,tagging_format=tagging_format)
         else:
             self.dataset = dataset
 
@@ -122,7 +122,7 @@ class NER(object):
         pickle.dump(self.parameters,open(os.path.join(model_folder,'parameters.pickle'),'wb'))
 
         bad_counter = 0  # number of epochs with no improvement on the validation test in terms of F1-score
-        previous_best_valid_f1_score = 0
+        previous_best_valid_f1_score = -100
         epoch_number = -1
 
         while True:
@@ -155,7 +155,7 @@ class NER(object):
                                 tagging_format=self.tagging_format)
             #     if epoch_number % 3 ==0:
             self.model.saver.save(self.sess, os.path.join(model_folder, 'model.ckpt'))
-            if f1_score['valid'][-2] - previous_best_valid_f1_score < 0.1:
+            if abs(f1_score['valid'][-2] - previous_best_valid_f1_score) < 0.1:
                 break
             previous_best_valid_f1_score =f1_score['valid'][-2]
             if epoch_number > max_number_of_epoch:
