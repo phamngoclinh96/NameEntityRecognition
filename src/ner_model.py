@@ -336,8 +336,7 @@ class BLSTM_CRF(object):
         if pretraining_dataset.index_to_token == dataset.index_to_token and pretraining_dataset.index_to_character == dataset.index_to_character:
 
             # Restore the pretrained model
-            self.saver.restore(sess,
-                               pretrained_model_checkpoint_filepath)  # Works only when the dimensions of tensor variables are matched.
+            self.saver.restore(sess,pretrained_model_checkpoint_filepath)  # Works only when the dimensions of tensor variables are matched.
 
         # If the token and character mappings are different between the pretrained model and the current model
         else:
@@ -349,8 +348,7 @@ class BLSTM_CRF(object):
                                                                                  token_dimension])
 
             # Restore the pretrained model
-            self.saver.restore(sess,
-                               pretrained_model_checkpoint_filepath)  # Works only when the dimensions of tensor variables are matched.
+            self.saver.restore(sess,pretrained_model_checkpoint_filepath)  # Works only when the dimensions of tensor variables are matched.
 
             # Get pretrained embeddings
             character_embedding_weights, token_embedding_weights = sess.run(

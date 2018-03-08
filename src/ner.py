@@ -138,7 +138,7 @@ class NER(object):
                 sequence_numbers = list(range(len(self.dataset.token_indices['train'])))
                 random.shuffle(sequence_numbers)
                 for sequence_number in sequence_numbers:
-                    transition_params_trained = train.train_step(self.sess, self.dataset, sequence_number, self.model,
+                    self.transition_params_trained = train.train_step(self.sess, self.dataset, sequence_number, self.model,
                                                                  dropout_rate)
                     step += 1
                     if step % 10 == 0:
@@ -156,57 +156,60 @@ class NER(object):
             #     if epoch_number % 3 ==0:
             self.model.saver.save(self.sess, os.path.join(model_folder, 'model.ckpt'))
             if abs(f1_score['valid'][-2] - previous_best_valid_f1_score) < 0.1:
+                bad_counter+=1
+            if bad_counter>10:
                 break
             previous_best_valid_f1_score =f1_score['valid'][-2]
             if epoch_number > max_number_of_epoch:
                 break
 
-    def predict(self,text,parameters):
-        parameters['dataset_text_folder'] = os.path.join('..', 'data', 'temp')
-        stats_graph_folder, _ = utils.create_stats_graph_folder(parameters)
-
-        # Update the deploy folder, file, and dataset
-        dataset_type = 'deploy'
-        ### Delete all deployment data
-        for filepath in glob.glob(os.path.join(parameters['dataset_text_folder'], '{0}*'.format(dataset_type))):
-            if os.path.isdir(filepath):
-                shutil.rmtree(filepath)
-            else:
-                os.remove(filepath)
-        ### Create brat folder and file
-        dataset_brat_deploy_folder = os.path.join(parameters['dataset_text_folder'], dataset_type)
-        utils.create_folder_if_not_exists(dataset_brat_deploy_folder)
-        dataset_brat_deploy_filepath = os.path.join(dataset_brat_deploy_folder, 'temp_{0}.txt'.format(str(self.prediction_count).zfill(5)))  # self._get_dataset_brat_deploy_filepath(dataset_brat_deploy_folder)
-        with codecs.open(dataset_brat_deploy_filepath, 'w', 'UTF-8') as f:
-            f.write(text)
-        ### Update deploy filepaths
-        dataset_filepaths, dataset_brat_folders = utils.get_valid_dataset_filepaths(parameters,
-                                                                                    dataset_types=[dataset_type])
-        dataset_filepaths.update(dataset_filepaths)
-        dataset_brat_folders.update(dataset_brat_folders)
-        ### Update the dataset for the new deploy set
-        self.dataset.update_dataset(dataset_filepaths, [dataset_type])
-
-        # Predict labels and output brat
-        output_filepaths = {}
-        prediction_output = train.prediction_step(self.sess, self.dataset, dataset_type, self.model,
-                                                  self.transition_params_trained, stats_graph_folder,
-                                                  self.prediction_count, dataset_filepaths, parameters['tagging_format'])
-        predictions, _, output_filepaths[dataset_type] = prediction_output
-
-        # print([self.dataset.index_to_label[prediction] for prediction in predictions])
-        conll2brat.output_brat(output_filepaths, dataset_brat_folders, stats_graph_folder, overwrite=True)
-
-        # Print and output result
-        text_filepath = os.path.join(stats_graph_folder, 'brat', 'deploy',
-                                     os.path.basename(dataset_brat_deploy_filepath))
-        annotation_filepath = os.path.join(stats_graph_folder, 'brat', 'deploy', '{0}.ann'.format(
-            utils.get_basename_without_extension(dataset_brat_deploy_filepath)))
-        text2, entities = brat2conll.get_entities_from_brat(text_filepath, annotation_filepath, verbose=True)
-        assert (text == text2)
-        return entities
+    # def predict(self,text,parameters):
+    #     parameters['dataset_text_folder'] = os.path.join('..', 'data', 'temp')
+    #     stats_graph_folder, _ = utils.create_stats_graph_folder(parameters)
+    #
+    #     # Update the deploy folder, file, and dataset
+    #     dataset_type = 'deploy'
+    #     ### Delete all deployment data
+    #     for filepath in glob.glob(os.path.join(parameters['dataset_text_folder'], '{0}*'.format(dataset_type))):
+    #         if os.path.isdir(filepath):
+    #             shutil.rmtree(filepath)
+    #         else:
+    #             os.remove(filepath)
+    #     ### Create brat folder and file
+    #     dataset_brat_deploy_folder = os.path.join(parameters['dataset_text_folder'], dataset_type)
+    #     utils.create_folder_if_not_exists(dataset_brat_deploy_folder)
+    #     dataset_brat_deploy_filepath = os.path.join(dataset_brat_deploy_folder, 'temp_{0}.txt'.format(str(self.prediction_count).zfill(5)))  # self._get_dataset_brat_deploy_filepath(dataset_brat_deploy_folder)
+    #     with codecs.open(dataset_brat_deploy_filepath, 'w', 'UTF-8') as f:
+    #         f.write(text)
+    #     ### Update deploy filepaths
+    #     dataset_filepaths, dataset_brat_folders = utils.get_valid_dataset_filepaths(parameters,
+    #                                                                                 dataset_types=[dataset_type])
+    #     dataset_filepaths.update(dataset_filepaths)
+    #     dataset_brat_folders.update(dataset_brat_folders)
+    #     ### Update the dataset for the new deploy set
+    #     self.dataset.update_dataset(dataset_filepaths, [dataset_type])
+    #
+    #     # Predict labels and output brat
+    #     output_filepaths = {}
+    #     prediction_output = train.prediction_step(self.sess, self.dataset, dataset_type, self.model,
+    #                                               self.transition_params_trained, stats_graph_folder,
+    #                                               self.prediction_count, dataset_filepaths, parameters['tagging_format'])
+    #     predictions, _, output_filepaths[dataset_type] = prediction_output
+    #
+    #     # print([self.dataset.index_to_label[prediction] for prediction in predictions])
+    #     conll2brat.output_brat(output_filepaths, dataset_brat_folders, stats_graph_folder, overwrite=True)
+    #
+    #     # Print and output result
+    #     text_filepath = os.path.join(stats_graph_folder, 'brat', 'deploy',
+    #                                  os.path.basename(dataset_brat_deploy_filepath))
+    #     annotation_filepath = os.path.join(stats_graph_folder, 'brat', 'deploy', '{0}.ann'.format(
+    #         utils.get_basename_without_extension(dataset_brat_deploy_filepath)))
+    #     text2, entities = brat2conll.get_entities_from_brat(text_filepath, annotation_filepath, verbose=True)
+    #     assert (text == text2)
+    #     return entities
 
     def quick_predict(self,text):
+        text = text+'.'
         sentences = brat2conll.get_sentences_and_tokens_from_spacy(text, self.nlp)
         dataset_type = self.dataset.create_deploy_set(sentences)
 
