@@ -157,6 +157,8 @@ class NER(object):
             self.model.saver.save(self.sess, os.path.join(model_folder, 'model.ckpt'))
             if abs(f1_score['valid'][-2] - previous_best_valid_f1_score) < 0.1:
                 bad_counter+=1
+            else:
+                bad_counter=0
             if bad_counter>10:
                 break
             previous_best_valid_f1_score =f1_score['valid'][-2]
