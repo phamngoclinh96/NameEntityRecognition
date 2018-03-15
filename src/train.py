@@ -137,6 +137,7 @@ def prediction(sess, dataset, dataset_type, model, transition_params_trained,tag
           model.input_token_patterns : dataset.token_patterns[dataset_type][i]
         }
         unary_scores, predictions = sess.run([model.unary_scores, model.predictions], feed_dict)
+
         # if use_crf:
         #     predictions, _ = tf.contrib.crf.viterbi_decode(unary_scores, transition_params_trained)
         #     predictions = predictions[1:-1]
