@@ -274,23 +274,20 @@ class BLSTM_CRF(object):
             }
             unary_scores, transition_params_trained = sess.run([self.unary_scores, self.transition_parameters], feed_dict)
 
-            # if use_crf:
-            #     predictions, _ = tf.contrib.crf.viterbi_decode(unary_scores, transition_params_trained)
-            #     predictions = predictions[1:-1]
-            # else:
-            #     predictions = predictions.tolist()
+
             predictions, _ = tf.contrib.crf.viterbi_decode(unary_scores, transition_params_trained)
             predictions = predictions[1:-1]
 
             assert (len(predictions) == len(token_indices[i]))
-            output_string = ''
-            # prediction_labels = [dataset.index_to_label[prediction] for prediction in predictions]
-            # # gold_labels = dataset.labels[dataset_type][i]
-            # if tagging_format == 'bioes':
-            #     prediction_labels = utils_nlp.bioes_to_bio(prediction_labels)
 
             all_predictions.append(predictions)
         return all_predictions
+
+    def load_token_embedding(self,sess,embedding):
+        sess.run(self.token_embedding_weights.assign(embedding))
+
+    def load_model(self,sess,pathfile):
+        self.saver.restore(sess, pathfile)
 
     def load_pretrained_token_embeddings(self, sess, dataset, embedding_filepath='', token_to_vector=None,
                                          check_lowercase=True, check_digits=True):
