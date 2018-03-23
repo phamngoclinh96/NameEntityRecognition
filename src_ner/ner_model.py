@@ -208,7 +208,7 @@ class BLSTM_CRF(object):
                 unary_scores_expanded, input_label_indices_flat_batch, sequence_lengths,
                 transition_params=self.transition_parameters)
             self.loss = tf.reduce_mean(-log_likelihood, name='cross_entropy_mean_loss')
-            self.accuracy = tf.constant(1)
+            # self.accuracy = tf.constant(1)
 
             self.crf_variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=vs.name)
 
@@ -238,7 +238,7 @@ class BLSTM_CRF(object):
         # The global step will be automatically incremented by one every time you execute train_op.
         self.train_op = self.optimizer.apply_gradients(grads_and_vars, global_step=self.global_step)
 
-    def train_step(self,sess,token_indices, character_indices_padded, token_lengths, pattern ,label_indices , label_vector ,dropout_rate ):
+    def train_step(self,sess,token_indices, character_indices_padded, token_lengths, pattern ,label_indices , label_vector ,dropout_rate = 0.5 ):
         for sequence_number in range(len(token_indices)):
             feed_dict = {
                 self.input_token_indices: token_indices[sequence_number],
@@ -251,10 +251,9 @@ class BLSTM_CRF(object):
                 self.dropout_keep_prob: 1 - dropout_rate,
 
             }
-            _, _, loss, accuracy, transition_params_trained = sess.run(
-                [self.train_op, self.global_step, self.loss, self.accuracy, self.transition_parameters],feed_dict)
-            if sequence_number % 1000 ==0:
-                print('accuracy : ',accuracy,'loss : ',loss)
+            _, _, loss, transition_params_trained = sess.run([self.train_op, self.global_step, self.loss,  self.transition_parameters],feed_dict)
+            if sequence_number % 2000 ==0:
+                print('loss : ',loss)
         return transition_params_trained
 
     def predict(self,sess,token_indices, character_indices_padded, token_lengths, pattern ):
@@ -274,23 +273,21 @@ class BLSTM_CRF(object):
             }
             unary_scores, transition_params_trained = sess.run([self.unary_scores, self.transition_parameters], feed_dict)
 
-            # if use_crf:
-            #     predictions, _ = tf.contrib.crf.viterbi_decode(unary_scores, transition_params_trained)
-            #     predictions = predictions[1:-1]
-            # else:
-            #     predictions = predictions.tolist()
+
             predictions, _ = tf.contrib.crf.viterbi_decode(unary_scores, transition_params_trained)
             predictions = predictions[1:-1]
 
             assert (len(predictions) == len(token_indices[i]))
-            output_string = ''
-            # prediction_labels = [dataset.index_to_label[prediction] for prediction in predictions]
-            # # gold_labels = dataset.labels[dataset_type][i]
-            # if tagging_format == 'bioes':
-            #     prediction_labels = utils_nlp.bioes_to_bio(prediction_labels)
 
             all_predictions.append(predictions)
         return all_predictions
+
+    def load_token_embedding(self,sess,vocab,token_to_vector,dim):
+        embedding = vocab.get_embedding(token_to_vector,dim)
+        sess.run(self.token_embedding_weights.assign(embedding))
+
+    def load_model(self,sess,pathfile):
+        self.saver.restore(sess, pathfile)
 
     def load_pretrained_token_embeddings(self, sess, dataset, embedding_filepath='', token_to_vector=None,
                                          check_lowercase=True, check_digits=True):
