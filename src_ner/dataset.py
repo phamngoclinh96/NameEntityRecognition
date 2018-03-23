@@ -15,7 +15,7 @@ import en_core_web_sm
 
 import utils_nlp
 
-nlp = en_core_web_sm.load()
+
 
 class Dataset(object):
     expressions = [
@@ -33,7 +33,7 @@ class Dataset(object):
         r"(?:CVE|exploit)",
         r"(?:HK|hk)[a-zA-Z0-9/]+"]
 
-    def __init__(self, token_to_vector, embedding_dim = 1, expressions=None):
+    def __init__(self, expressions=None):
         self.token2index = {}
         self.tokens = []
         self.characters = []
@@ -45,22 +45,23 @@ class Dataset(object):
         self.PADDING_INDEX = 0
         self.characters.append('pad')
         # self.token2vector = token_to_vector
-        self.dictionary = (token_to_vector.keys())
+        # self.dictionary = (token_to_vector.keys())
         # self.token2vector[self.UNK] = np.zeros([embedding_dim])
-        self.embedding_dim = embedding_dim
+
+        # self.embedding_dim = embedding_dim
         self.label2index = {}
         self.labels = []
-        self.nlp = en_core_web_sm.load()
+        # self.nlp = en_core_web_sm.load()
         self.verbose = False
         self.number_of_classes = 1
 
         if expressions != None:
-            self.expressions = expressions
+            self.expressions = expressions[:]
         self.size_pattern_vector = len(self.expressions)
 
-    def add_token(self, token):
+    def add_token(self, token ,token_to_vector):
         lower = token.lower()
-        if lower in self.dictionary:
+        if lower in token_to_vector.keys():
             if lower not in self.token2index.keys():
                 self.token2index[lower] = len(self.tokens)
                 self.tokens.append(lower)
@@ -85,10 +86,18 @@ class Dataset(object):
         unk_vector = np.zeros([embedding_dim])
         return [token2vector.get(token, unk_vector) for token in self.tokens]
 
-    def build_vocabulary(self, tokens):
+    def build_vocabulary(self, tokens ,token_to_vector ):
         for sequence in tokens:
             for token in sequence:
-                self.add_token(token)
+                lower = token.lower()
+                if lower in token_to_vector.keys():
+                    if lower not in self.token2index.keys():
+                        self.token2index[lower] = len(self.tokens)
+                        self.tokens.append(lower)
+                        self.vocabulary_size = len(self.tokens)
+
+                for char in list(token):
+                    self.add_character(char)
 
     def build_labels(self, labels):
         for label_sequence in labels:
@@ -151,14 +160,14 @@ class Dataset(object):
 
         return token_indices, character_indices_padded, token_lengths, pattern, label_indices, label_vector_indices
 
-    def tokenizer(self, text):
-        sentences = brat2conll.get_sentences_and_tokens_from_spacy(text, self.nlp)
-        sentences = [[token['text'] for token in sentence] for sentence in sentences]
-        return sentences
 
-    def transform_text(self, text):
-        return self.transform(self.tokenizer(text))
 
+nlp = en_core_web_sm.load()
+
+def tokenizer( text):
+    sentences = brat2conll.get_sentences_and_tokens_from_spacy(text, nlp)
+    sentences = [[token['text'] for token in sentence] for sentence in sentences]
+    return sentences
 
 def parse_conll( pathfile):
      token_count = collections.defaultdict(lambda: 0)
