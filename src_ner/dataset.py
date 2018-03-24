@@ -84,7 +84,7 @@ class Dataset(object):
 
     def get_embedding(self, token2vector, embedding_dim):
         unk_vector = np.zeros([embedding_dim])
-        return [token2vector.get(token, unk_vector) for token in self.tokens]
+        return np.array([token2vector.get(token, unk_vector) for token in self.tokens])
 
     def build_vocabulary(self, tokens ,token_to_vector ):
         for sequence in tokens:
