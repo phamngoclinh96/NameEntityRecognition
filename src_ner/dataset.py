@@ -1,6 +1,6 @@
 import codecs
 import glob
-import random
+
 import os
 
 import numpy as np
@@ -162,12 +162,38 @@ class Dataset(object):
 
 
 
-nlp = en_core_web_sm.load()
+spacy_nlp = en_core_web_sm.load()
 
-def tokenizer( text):
-    sentences = brat2conll.get_sentences_and_tokens_from_spacy(text, nlp)
-    sentences = [[token['text'] for token in sentence] for sentence in sentences]
+def tokenizer(text):
+    document = spacy_nlp(text)
+    # sentences
+    sentences = []
+    for span in document.sents:
+        sentence = [document[i] for i in range(span.start, span.end)]
+        sentence_tokens = []
+        for token in sentence:
+            # token_dict = {}
+            start = token.idx
+            end = token.idx + len(token)
+            token = text[start:end]
+            if token.strip() in ['\n', '\t', ' ', '']:
+                continue
+            # Make sure that the token text does not contain any space
+            if len(token.split(' ')) != 1:
+                print(
+                    "WARNING: the text of the token contains space character, replaced with hyphen\n\t{0}\n\t{1}".format(
+                        token,
+                        token.replace(' ', '-')))
+                token = token.replace(' ', '-')
+            sentence_tokens.append(token)
+        sentences.append(sentence_tokens)
     return sentences
+
+
+# def tokenizer( text):
+#     sentences = brat2conll.get_sentences_and_tokens_from_spacy(text, nlp)
+#     sentences = [[token['text'] for token in sentence] for sentence in sentences]
+#     return sentences
 
 def parse_conll( pathfile):
      token_count = collections.defaultdict(lambda: 0)
