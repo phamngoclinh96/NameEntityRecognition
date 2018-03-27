@@ -10,7 +10,6 @@ import sklearn.preprocessing
 
 import utils_re
 import utils
-import brat2conll
 import en_core_web_sm
 
 import utils_nlp
@@ -278,6 +277,30 @@ def get_entities_from_brat(text_filepath, annotation_filepath, verbose=False):
 
     return text, entities
 
+def get_sentences_and_tokens_from_spacy(text):
+    document = spacy_nlp(text)
+    # sentences
+    sentences = []
+    for span in document.sents:
+        sentence = [document[i] for i in range(span.start, span.end)]
+        sentence_tokens = []
+        for token in sentence:
+            token_dict = {}
+            token_dict['start'] = token.idx
+            token_dict['end'] = token.idx + len(token)
+            token_dict['text'] = text[token_dict['start']:token_dict['end']]
+            if token_dict['text'].strip() in ['\n', '\t', ' ', '']:
+                continue
+            # Make sure that the token text does not contain any space
+            if len(token_dict['text'].split(' ')) != 1:
+                print(
+                    "WARNING: the text of the token contains space character, replaced with hyphen\n\t{0}\n\t{1}".format(
+                        token_dict['text'],
+                        token_dict['text'].replace(' ', '-')))
+                token_dict['text'] = token_dict['text'].replace(' ', '-')
+            sentence_tokens.append(token_dict)
+        sentences.append(sentence_tokens)
+    return sentences
 
 def parse_brat(pathfile):
     base_filename = os.path.splitext(os.path.basename(pathfile))[0]
@@ -295,7 +318,7 @@ def parse_brat(pathfile):
     # elif tokenizer == 'stanford':
     #     sentences = get_sentences_and_tokens_from_stanford(text, core_nlp)
 
-    sentences = brat2conll.get_sentences_and_tokens_from_spacy(text, nlp)
+    sentences = get_sentences_and_tokens_from_spacy(text)
 
     tokens = []
     labels = []

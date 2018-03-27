@@ -34,7 +34,6 @@ def predict(text,vocab,model,sess):
                     if previous_label != 'O':
                         tokens.append(token)
                         entitys.append(previous_label)
-                        token = ''
                     previous_label = label[1]
                     token = sentences[i][
                         j]  # self.dataset.index_to_token[self.dataset.token_indices[dataset_type][i][j]]
@@ -54,16 +53,16 @@ def main():
     tokens ={}
     labels ={}
     print('Load embedding ..')
-    token_to_vector = utils_nlp.load_pretrained_token_embeddings(embedding_path)
-    vocab = dataset.Dataset()
-    # vocab = pickle.load(open('../../model/vocab.pickle','rb'))
+    # token_to_vector = utils_nlp.load_pretrained_token_embeddings(embedding_path)
+    # vocab = dataset.Dataset()
+    vocab = pickle.load(open('../../model/vocab.pickle','rb'))
     for type in data_path.keys():
         tokens[type],labels[type] = dataset.parse_conll(data_path[type])
         labels[type] = [utils_nlp.bio_to_bioes(label) for label in labels[type]]
-        vocab.build_vocabulary(tokens[type], token_to_vector)
-        vocab.build_labels(labels[type])
+        # vocab.build_vocabulary(tokens[type], token_to_vector)
+        # vocab.build_labels(labels[type])
 
-    pickle.dump(vocab,open('../../model/vocab.pickle','wb'))
+    # pickle.dump(vocab,open('../../model/vocab.pickle','wb'))
     token_indices = {}
     character_indices_padded ={}
     token_lengths = {}
@@ -76,9 +75,10 @@ def main():
     sess = tf.Session()
     model= ner_model.BLSTM_CRF(vocab,token_embedding_dimension=100,character_lstm_hidden_state_dimension=50,token_lstm_hidden_state_dimension=50,character_embedding_dimension=25)
     sess.run(tf.global_variables_initializer())
-    model.load_token_embedding(sess,vocab,token_to_vector,100)
-    # sess.run(model.token_embedding_weights.assign(np.ndarray([vocab.vocabulary_size,100])))
-    for epoch in range(1):
+    model.load_model(sess,'../../model/model.ckpt')
+    # model.load_token_embedding(sess,vocab,token_to_vector,100)
+
+    for epoch in range(10):
         type= 'train'
         model.train_step(sess,token_indices[type],character_indices_padded[type],token_lengths[type],pattern[type],label_indices[type],label_vector_indices[type],0.5)
 
@@ -88,4 +88,4 @@ def main():
 
     print(predict('my name is Ngoc Linh',vocab,model,sess))
 
-
+main()
