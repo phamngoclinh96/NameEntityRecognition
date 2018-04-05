@@ -1,0 +1,243 @@
+A case study tracking adversary infrastructure through SSL certificate use featuring Fancy Bear/APT28/Sofacy.
+A long time ago, in a galaxy... No. Stop. We're not doing that anymore. Instead, we're pivoting to Game of Thrones, or A Song of Ice and Fire for you bookworms, because the fantastical realm provides great material we can relate to cybersecurity.
+
+This research builds off our previous work using SSL certificates and splash pages to proactively identify Fancy Bear infrastructure. We identified a SSL certificate subject string that Fancy Bear has used consistently since 2016, which further illuminates their infrastructure and registration tactics. Our hope is that in addition to the indicators themselves, our readers will apply these techniques to their research on other adversaries.
+
+We'll walk through the process of how we conducted this research, which used ThreatConnect, Censys, Farsight Security Passive DNS, RiskIQ, and DomainTools. To date, this line of research has identified 47 IPs, 46 domains, 33 registrant email addresses, and 47 SSL certificates shared in ThreatConnect in Incident 20180209C: "C=GB, ST=London, L=London, O=Security, OU=IT" Certificate Infrastructure. It also underscores consistent Fancy Bear tactics including:
+
+Use of small or boutique hosting service providers such as Domains4Bitcoins, ITitch, and NJALLA.
+Minimizing the reuse of email addresses to register domains.
+Regular use of email domains sapo[.]pt, mail[.]com, centrum[.]cz, and cock[.]li or privacy protection services.
+Domain registration and SSL certificate creation times that are consistent with an actor operating in Moscow.
+
+
+The Watchers in the Night
+
+Everybody thinks they are House Stark material, but we would assert cybersecurity personnel are more like the sworn members of the Night's Watch. You are the watchers on the firewall, the sword in the dark web, and the shield that guards the networks of your organization.
+
+If we're being honest, the ThreatConnect Research team and cyber threat intelligence analysts at large, are most like... wait for it... Samwell Tarly (none of us harbors the delusion of being Jon Snow). Tarly is dedicated to aggregating and analyzing intelligence on threats beyond the wall -- the Night King and his White Walkers -- to better understand how the Night's Watch can react to them and proactively address them.
+
+ 
+
+
+
+ 
+
+Looking for Adversary Infrastructure Using a Common SSL Certificate Subject String
+
+In our recent efforts to proactively address Fancy Bear, we reviewed SSL certificate information in Censys for domains and IPs using a "Coming soon" splash page consistent with previously identified Fancy Bear infrastructure. We found the same subject field used repeatedly -- "C=GB, ST=London, L=London, O=Security, OU=IT, CN=(domain name)" -- as shown below for space-delivery[.]com and webversionact[.]org.
+
+
+
+ 
+
+
+Censys SSL certificate information showing consistent use of subject string.
+
+ 
+
+This subject line indicates a SSL certificate likely created using OpenSSL, where the creator assigns values for the country (C), state (ST), location (L), organization (O), organizational unit (OU), and common name (CN). It is important to note that the common name is intended to reflect the domain name where the SSL certificate is being used, but in our research we found several instances where this domain name was misspelled or altogether different from the domain where it was used. More on that later.
+
+ 
+
+Radiating out: how common is that subject string?
+
+Next, we needed to get an idea of how widely this string is used and what other infrastructure is using similar SSL certificates to gain insight into more possible Fancy Bear infrastructure. Again using Censys, we found 47 certificates that have the same SSL string. In Censys we also queried for IP addresses that host a server using a SSL certificate with that string. The latter provides a view of active infrastructure, while the former can be used to find both historical and active infrastructure.
+
+
+
+Censys certificate search results for identified subject string.
+
+ 
+
+Careful though: other individuals could easily use OpenSSL to create certificates with the same subject fields; this alone is not sufficient to identify Fancy Bear. Using ThreatConnect's Analyze function we saw that at least 23 of the specified common names have been associated with Fancy Bear attacks. Many of the remaining domains have also been identified through our ongoing research into name servers that Fancy Bear uses. This increases our confidence in assessing that SSL certificates with that subject string probably are associated with Fancy Bear activity.
+
+ 
+
+
+
+ThreatConnect Analyze results showing indicators that already have information in ThreatConnect.
+
+ 
+
+Stitching together certificates, IP addresses, and the right domains
+
+
+
+Censys SSL certificate information for 46ce0b05f302e0d855e9cc751100299345466581.
+
+ 
+
+At least 39 of the certificates identified in the previous query are no longer in use, but we used RiskIQ to search for the SHA-1 hash and identified the IP addresses that previously hosted a server using that certificate. For example, searching for the previously used SSL certificate 46ce0b05f302e0d855e9cc751100299345466581, we saw that it was used at the IP 191.101.31.96.
+
+ 
+
+
+
+RiskIQ SSL certificate information for 46ce0b05f302e0d855e9cc751100299345466581.
+
+ 
+
+Reviewing this IP address in ThreatConnect using our integration with Farsight DNSDB, we saw that this IP address hosted the domain remsupport[.]org. This is a notable finding as well because the domain does not correspond to the ecitcom[.]net that was specified in the common name field in the certificate subject, so we took an extra step to make sure we matched up the right certificate to the right domain.
+
+ 
+
+
+
+ThreatConnect's Farsight Security Passive DNS integration results for 191.101.31.96.
+
+ 
+
+Conducting this same process for all of the SSL certificates, we came up with the following list sorted by the SSL certificate's create date/time:
+
+SSL Certificate SHA-1	IP Hosting Certificate	SSL Certificate Create Date/Time	Domain Hosted At IP or Common Name in SSL Certificate
+62e1045ae816b5f44cb43ab52ecb8e4534b63147	87.121.52.162	2/20/18 12:19	webversionact[.]org
+1e185ee8ac3c3eafcc2b4d842ed5711b9c62a305	151.80.74.170	2/8/18 7:57	mdcrewonline[.]com
+43df735cfea482ffc27252ae08c94f359c499f69	151.80.74.167	1/31/18 11:52	cdnverify[.]net
+9d73605a130c377909fe463bc68ac83f73c04a46	146.185.253.131	1/23/18 11:28	nomartung[.]org
+fcc696070de34157a02c46aa765c3c7969677fea	179.43.160.184	12/21/17 15:55	europehistoricalmuseum[.]com
+126e9d0cf80badf7810859fc116267d40ed1c58b	92.222.136.105	12/21/17 8:34	supservermgr[.]com
+9153efa5001c67fdce4bb861f8758cd90b072901	89.34.111.160	10/30/17 13:44	satellitedeluxpanorama[.]com
+739e8cc0519aeeb8dd1417e45f9577bd394684f0	185.216.35.26	10/30/17 10:41	webviewres[.]net
+ffd3a351d6d438405a917af66634091673bbd96b	149.255.35.6
+149.255.35.7
+
+10/30/17 9:43	vermasterss[.]com
+89bba1abb0078ffab8dbf2cfa85697b147d8223d	89.37.226.105	10/27/17 7:46	funnymems[.]com
+3f17cbb5792e6b9ff8607b23bbc8ad40c735819c	185.86.148.57	10/20/17 10:21	space-delivery[.]com
+6860d7aabef2f2382476d9a350c225956bf351c7	23.227.196.21	10/17/17 8:51	travelbern[.]com
+b86f517d347e53b3b7116682d7f36a3b77fa8bdf		10/16/17 8:41	space-delivery[.]com
+46330eac674b27a4f34ba6864a74bfef59998e5c	146.185.253.132	10/4/17 11:46	myinvestgroup[.]com
+551a8e0b504fa19e643dae39002bd0b91a5cfa7e	176.223.111.10	10/2/17 14:29	nanetsdeb[.]com
+2a71f7ed0de7b89f4a10d329227898edcd3af6ce	87.120.37.25	9/29/17 13:52	nanetsdeb[.]com
+b99346a7f7809578330e4763329209c2381d2f95	176.223.165.217	9/29/17 11:48	fastphotobucket[.]com
+ea3198f2ef8685a6f8a1303a55fdb7062a6f30b0	185.86.148.212	7/12/17 13:05	rapidfileuploader[.]org
+b64268d418592d481e13ed6aa4dc233b9dbd486d		7/7/17 7:39	viters[.]org
+9aa7508f1be201120511b1a4bc91e653c82df924	89.33.246.117	6/28/17 12:57	mvtband[.]net
+d514a2a79a0e1a046846963797319fe8e00cdbeb	89.44.103.18	4/13/17 7:43	spelns[.]com
+2e53a96a63c8cc17f2824bcdf7c93d64dad45170	95.215.45.43	4/3/17 13:14	wmdmediacodecs[.]com
+b07d766664cfa183dba3ee32ab35ed32c7f501c2	95.215.47.226	3/29/17 10:09	acrobatportable[.]com
+f9abac0f831e9ea43727a02810ebd6969e8e5951	173.243.112.202	2/3/17 9:06	lgemon[.]org
+37ab57a30ffd3826a24acd2b3b596d7bf160960c	91.108.68.171	1/31/17 8:41	lowprt[.]org
+1f2a652a68f9ae6a241aed55d80597222d6c2b21	103.41.177.44	1/13/17 9:16	evbrax[.]org
+bd4255444ba646796c16e967ec0aa1dd95a7a0f2	195.12.50.163	1/13/17 7:22	wsusconnect[.]com
+09ab2ae3ff9f175c18786656194a81be5d6ff732	89.42.212.141	12/21/16 9:35	gtranm[.]com
+010e271b2c860caba78475f02edcd30d7a896383	146.0.43.98	12/15/16 9:57	reportscanprotecting[.]org
+513587ce94be7d70b1f6661f22758ec6fd591d11	185.156.173.70	11/30/16 8:03	runvercheck[.]com
+8dc11f57d69a5583b196c28a9cf816e10a3fa327	95.215.47.162	11/30/16 7:47	noticermk[.]com
+46ce0b05f302e0d855e9cc751100299345466581	191.101.31.96	11/30/16 7:35	remsupport[.]org
+edb4339cdfa0b43d8ef5fb49cc9fdcbbbf2208be	86.105.1.121	11/25/16 7:30	globaltechresearch[.]org
+0153d822178cd0f0725a9a1438d5b2a49edfe71a	87.236.215.134	11/17/16 6:09	
+d1a1d61806513cde9b2f8d817a55cc16384f490f	89.45.67.26	11/11/16 9:35	applecloudupdate[.]com
+9d54194ba9140c148b8b3eb900dfb7b11ec155e2	86.105.1.13	11/10/16 8:00	joshel[.]com
+9baf76a0a3a4ce78d3c2ce04e64cae0ea604c7aa	89.45.67.20	10/31/16 9:20	akamaisoftupdate[.]com
+7dcf45941d734b4c42c9a1f90d57e1c816610dff	62.113.232.197	10/26/16 7:57	ppcodecs[.]com
+3bc30b4ff457d10651688140b0844fd0d17f4a64	176.223.111.237
+46.102.152.132
+
+10/24/16 8:22	appservicegroup[.]com
+c201e616fe90ae2592c34de03611748510aba143	179.43.128.75	9/13/16 5:33	dateosx[.]com
+f6ac5bd6aa52d96d8d413157fbfd1a6be7f65cb7	86.105.18.146	9/9/16 13:27	dowssys[.]com
+5be56e0660a001a12c8ef250ff86369c50ca73a8	87.236.215.21	8/18/16 12:32	microsoftstoreservice[.]com
+ea8e4e7882a116ed43db4e5218efb2fd3ba2d116	191.96.249.31	7/20/16 6:56	microsoftdccenter[.]com
+c3b7df9d2a4eb05d399c336eec4c6ff0688596bd	95.215.44.247	7/12/16 6:12	mvsband[.]com
+c5ec8bb4bb5842930da935e13b9bee604e3b6182	95.215.44.240	7/8/16 7:54	dvsservice[.]com
+f65d9f8f385cf384cee24a6d04df600d575dd5f6	51.254.76.54	7/8/16 7:09	akamaitechupdate[.]com
+7d5eaecc2c6865a1f846d03b6d3e0b649a36c2c1	185.86.148.14	6/1/16 7:35	
+adobeupdatetechnology[.]com
+
+Once that we had a list of the domains, we further enriched this information by identifying the WHOIS information for these domains. Doing so provided historical information on how these domains were registered.
+
+ 
+
+
+
+ 
+
+Gathering Intelligence: Layering on WHOIS Data
+
+To do so, we used some capabilities and integrations from our friends at DomainTools. Specifically, we were looking to identify registrant email addresses, name servers/hosting providers, and creation timestamps. We started by doing a DomainTools Iris search for the domains listed above.
+
+
+
+DomainTools Iris search for identified domains.
+
+ 
+
+This provided the current WHOIS information for those domains. However, some of the domains have been taken over since they were operational or the WHOIS has otherwise changed since it was registered for use in operations. For any domains where we thought this was the case, we reviewed the WHOIS history in our DomainTools Spaces app to identify the original registration information that corresponds to the timeframe in which the domain was operational.
+
+
+
+ThreatConnect's DomainTools Spaces App WHOIS history for adobeupdatetechnology[.]com.
+
+ 
+
+Ultimately, we identified the below registration information for these domains.
+
+ 
+
+Domain	Original Registrant	Original Nameserver	Create Date	Create Time
+webversionact[.]org	Private registration	NS-CANADA.TOPDNS.COM	2/14/18	7:44:16
+cdnverify[.]net	declan.jefferson@sapo[.]pt	ns1.ititch.com	1/31/18	7:58:54
+nomartung[.]org	Private registration	NS-CANADA.TOPDNS.COM	1/17/18	3:10:21
+mdcrewonline[.]com	htomary@cock[.]li	stvl113289.earth.obox-dns.com	12/21/17	13:19:00
+supservermgr[.]com	Private registration	NS-CANADA.TOPDNS.COM	12/21/17	7:58:00
+europehistoricalmuseum[.]com	Private registration	ns1.bulletdns.net	10/26/17	2:22:36
+vermasterss[.]com	reynoso89@cock[.]li	stvl113289.earth.obox-dns.com	10/25/17	8:24:14
+webviewres[.]net	Private registration	ns1.njal.la	10/25/17	8:23:14
+funnymems[.]com	Private registration	ns1.njal.la	10/24/17	11:11:37
+satellitedeluxpanorama[.]com	Private registration	ns1.njal.la	10/20/17	11:25:22
+space-delivery[.]com	elbertnagel@cock[.]li	ns1.ipstates.net	10/9/17	9:22:13
+nanetsdeb[.]com	gabrielromao@sapo[.]pt	ns1.ititch.com	9/29/17	5:53:25
+fastphotobucket[.]com	Private registration	1-you.njalla.no	9/28/17	14:13:26
+myinvestgroup[.]com	loisoji@firemail[.]cc	ns1.ipstates.net	9/28/17	9:27:23
+travelbern[.]com	k0koth@sapo[.]pt	stvl113289.earth.obox-dns.com	9/12/17	11:00:44
+rapidfileuploader[.]org	Private registration	NS-CANADA.TOPDNS.COM	7/11/17	13:27:47
+viters[.]org	Private registration	ns1.nemohosts.com	7/6/17	13:08:10
+mvtband[.]net	Private registration	stvl113289.earth.obox-dns.com	6/27/17	8:57:22
+wmdmediacodecs[.]com	istakav@cock[.]li	stvl113289.earth.obox-dns.com	3/31/17	12:18:37
+spelns[.]com	Private registration	ns1.nemohosts.com	3/22/17	18:28:42
+lgemon[.]org	ezgune@cock[.]li	STVL113289.MERCURY.OBOX-DNS.COM	1/31/17	11:43:39
+lowprt[.]org	avramberkovic@centrum[.]cz	NS4.ITITCH.COM	1/20/17	12:48:37
+acrobatportable[.]com	jul_marian@centrum[.]cz	stvl113289.earth.obox-dns.com	1/12/17	9:23:47
+evbrax[.]org	kern82@gmx[.]net	ns1.ititch.com	1/10/17	8:48:43
+gtranm[.]com	wee7_nim@centrum[.]cz	stvl113289.earth.obox-dns.com	12/14/16	8:54:26
+reportscanprotecting[.]org	abor.g.s@europe[.]com	ns1.carbon2u.com	12/3/16	9:43:29
+runvercheck[.]com	cauel-mino@centrum[.]cz	stvl113289.earth.obox-dns.com	11/25/16	12:11:35
+remsupport[.]org	ja.philip@centrum[.]cz	stvl113289.earth.obox-dns.com	11/25/16	11:08:16
+noticermk[.]com	frfdccr42@centrum[.]cz	ns1.ititch.com	11/24/16	12:45:47
+globaltechresearch[.]org	morata_al@mail[.]com	ns1.carbon2u.com	11/21/16	11:23:40
+joshel[.]com	germsuz86@centrum[.]cz	ns1.ititch.com	11/9/16	14:18:09
+applecloudupdate[.]com	ll1kllan@engineer[.]com	ns1.carbon2u.com	11/4/16	1:09:13
+akamaisoftupdate[.]com	mahuudd@centrum[.]cz	ns1.carbon2u.com	10/27/16	13:23:20
+wsusconnect[.]com	laurent1983@mail[.]com	ns1.ititch.com	10/27/16	11:22:42
+apptaskserver[.]com	partanencomp@mail[.]com	ns1.ititch.com	10/22/16	11:26:00
+appservicegroup[.]com	olivier_servgr@mail[.]com	ns1.carbon2u.com	10/19/16	8:27:30
+ppcodecs[.]com	chpiost8n@post[.]com	ns1.carbon2u.com	10/19/16	7:36:39
+dateosx[.]com	milimil0702@mail[.]com	ns1.carbon2u.com	9/13/16	10:12:31
+dowssys[.]com	adam_corbett@mail[.]com	ns1.ititch.com	9/8/16	12:38:29
+mvsband[.]com	iflatley@openmailbox[.]org	1a7ea920.bitcoin-dns.hosting	8/24/16	13:38:02
+microsoftstoreservice[.]com	craft030795@mail[.]com	ns1.ititch.com	8/19/16	8:47:21
+microsoftdccenter[.]com	Private registration	ns1.ititch.com	7/20/16	12:51:42
+dvsservice[.]net	pirlo.vasces@mail[.]com	1a7ea920.bitcoin-dns.hosting	7/11/16	9:48:23
+dvsservice[.]com	fernando2011@post[.]com	1a7ea920.bitcoin-dns.hosting	7/5/16	14:55:25
+akamaitechupdate[.]com	guiromolly@mail[.]com	1a7ea920.bitcoin-dns.hosting	6/21/16	7:49:25
+adobeupdatetechnology[.]com	best.cameron@mail[.]com	1a7ea920.bitcoin-dns.hosting	5/30/16	14:24:25
+ 
+
+We have shared this information, including the domains, IPs, and email addresses, with our Common Community in Incident 20180209C: "C=GB, ST=London, L=London, O=Security, OU=IT" Certificate Infrastructure.
+
+ 
+
+
+
+Assessing Tactics
+
+There are Fancy Bear tactics that we can glean and proactively exploit to identify their activity going forward in addition to monitoring for new domains/IPs that use the aforementioned SSL certificate subject string.
+
+Hosting Service Providers/Name Servers
+The domains' original name servers helps identify the hosting service providers that the actors used to procure the infrastructure. These include several providers that we've previously called out, such as Domains4Bitcoins, ITitch, Nemohosts, Carbon2u and NJALLA. We can proactively monitor for newly registered domains using these name servers and with other consistencies to Fancy Bear to potentially identify their infrastructure before it is used in operations.
+
+Email Addresses
+
+We used DomainTools Reverse WHOIS to search for any additional domains registered using the email addresses above. As it turns out, only one of the email addresses -- iflatley@openmailbox[.]org -- registered a second domain (rndversion[.]net). This minimal reuse of email addresses suggests an operational security (opsec) effort to deter efforts to trace out their infrastructure based on known registrants.

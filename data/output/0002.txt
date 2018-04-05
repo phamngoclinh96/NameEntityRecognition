@@ -1,0 +1,85 @@
+SSL certificate:Exploit_target_category
+Fancy Bear:Threat_Actor
+APT28/Sofacy:Threat_Actor
+Game of Thrones:Target
+A Song of Ice and Fire:Target
+SSL certificates:Exploit_target_category
+Fancy Bear:Threat_Actor
+SSL certificate:Exploit_target_category
+Fancy Bear:Threat_Actor
+ThreatConnect:Organization
+Censys:Organization
+Farsight Security:Organization
+RiskIQ:Organization
+DomainTools:Organization
+ThreatConnect:Organization
+Fancy Bear:Threat_Actor
+Domains4Bitcoins:Organization
+ITitch:Organization
+NJALLA:Organization
+Domain registration:Exploit_target_category
+SSL certificate:Exploit_target_category
+Moscow:Location
+House Stark:Organization
+ThreatConnect Research:Organization
+Samwell Tarly:Person_name
+Tarly:Person_name
+Looking for Adversary Infrastructure:Attack_vector
+Common SSL Certificate Subject String:Exploit_target_category
+Fancy Bear:Target
+SSL certificate information:Exploit_target_category
+Censys:Exploit_Kit
+SSL certificate information:Exploit_target_category
+SSL certificate:Exploit_target_category
+OpenSSL:Exploit_Kit
+SSL certificate:Exploit_target_category
+SSL certificates:Exploit_target_category
+Fancy Bear:Organization
+Censys:Exploit_Kit
+SSL string:Exploit_target_category
+Censys:Exploit_Kit
+SSL certificate:Exploit_target_category
+Censys:Exploit_Kit
+OpenSSL:Exploit_Kit
+Fancy Bear:Organization
+ThreatConnect 's Analyze function:Attack_vector
+Fancy Bear:Organization
+Fancy Bear:Organization
+ThreatConnect Analyze:Product
+ThreatConnect:Product
+Censys:Exploit_Kit
+SSL certificate:Exploit_target_category
+RiskIQ:Exploit_Kit
+SSL certificate:Exploit_target_category
+ThreatConnect:Exploit_Kit
+Farsight DNSDB:Exploit_Kit
+ThreatConnect 's Farsight Security Passive DNS:Technology
+DomainTools:Exploit_Kit
+DomainTools Iris:Exploit_Kit
+DomainTools Spaces:Exploit_Kit
+ThreatConnect 's DomainTools Spaces App:Product
+travelbern[.]com:Domain
+k0koth@sapo[.]pt:Domain
+wmdmediacodecs[.]com:Domain
+istakav@cock[.]li:Domain
+evbrax[.]org:Domain
+kern82@gmx[.]net:Domain
+joshel[.]com:Domain
+akamaisoftupdate[.]com:Domain
+wsusconnect[.]com:Domain
+apptaskserver[.]com:Domain
+olivier_servgr@mail[.]com:Domain
+microsoftdccenter[.]com:Domain
+dvsservice[.]net:Domain
+dvsservice[.]com:Domain
+guiromolly@mail[.]com:Domain
+Fancy Bear:Organization
+SSL certificate subject string:Exploit_target_category
+Domains4Bitcoins:Product
+ITitch:Product
+Nemohosts:Product
+Carbon2u:Product
+NJALLA:Product
+Fancy Bear:Organization
+DomainTools Reverse:Exploit_Kit
+

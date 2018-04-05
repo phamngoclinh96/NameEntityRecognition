@@ -1,0 +1,70 @@
+Uber ’s:Organization
+California:Location
+Arizona:Organization
+Arizona:Malware
+California:Location
+Pittsburgh:Vulnerability
+Elaine Herzberg:Threat_Actor
+Tempe:Vulnerability
+Arizona:Malware
+The California Department:Organization
+Uber:Malware
+Uber:Organization
+California:Location
+California:Location
+Brian Soublet:Person_name
+California:Location
+Austin Heyworth:Organization
+Uber:Malware
+California:Location
+Arizona:Malware
+Soublet:Organization
+Uber:Malware
+Uber:Product
+Forbes:Organization
+Uber:Organization
+Arizona:Organization
+Grayson Brulte:Person_name
+Beverly Hills:Organization
+Dara Khosrowshahi:Person_name
+Uber:Organization
+Khosrowshahi:Organization
+California:Location
+California:Location
+Tempe:Target
+Uber:Organization
+California:Location
+Uber:Malware
+Nvidia:Person_name
+California DMV:Location
+Toyota:Threat_Actor
+California:Location
+Michigan:Organization
+John Hanson:Threat_Actor
+Jaguar:Organization
+FCA:Organization
+Pacifica Hybrid minivans:Threat_Actor
+U.S.:Location
+Motors’ Cruise:Threat_Actor
+NuTonomy:Person_name
+Aptiv:Organization
+Forbes:Person_name
+Arizona Governor Doug Ducey:Threat_Actor
+CEO Khosrowshahi:Person_name
+Ducey:Organization
+Department of Transportation:Organization
+Arizona:Malware
+Phoenix:Exploit_Kit
+LiDAR:Attack_vector
+LiDAR:Organization
+Herzberg:Product
+Karl Iagnemma:Person_name
+NADA 2018 Global Automotive:Organization
+New York:Location
+Iagnemma:Product
+Joann Muller:Person_name
+Sam Abuelsamid:Person_name
+San Jose:Location
+Ohnsman:Other
+Forbes:Organization
+

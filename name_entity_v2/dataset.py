@@ -161,6 +161,8 @@ class Dataset(object):
 
 
 
+
+
 spacy_nlp = en_core_web_sm.load()
 
 def tokenizer(text):
@@ -309,7 +311,7 @@ def get_sentences_and_tokens_from_spacy(text):
         sentences.append(sentence_tokens)
     return sentences
 
-def parse_brat(pathfile):
+def parse_brat(pathfile,split_sentence = True):
     base_filename = os.path.splitext(os.path.basename(pathfile))[0]
     text_filepath = os.path.join(os.path.dirname(pathfile), base_filename + '.txt')
     annotation_filepath = os.path.join(os.path.dirname(pathfile), base_filename + '.ann')
@@ -370,10 +372,16 @@ def parse_brat(pathfile):
             # output_file.write(
             #     '{0} {1} {2} {3} {4}\n'.format(token['text'], base_filename, token['start'], token['end'],
             #                                    gold_label))
-        tokens.append(token_sequence)
-        labels.append(label_sequence)
-
-    return tokens,labels
+        if split_sentence:
+            tokens.append(token_sequence)
+            labels.append(label_sequence)
+        else:
+            tokens.extend(token_sequence)
+            labels.extend(label_sequence)
+    if split_sentence:
+        return tokens,labels
+    else:
+        return [tokens],[labels]
 
 def parse_brat_folder(path_folder):
     text_filepaths = sorted(glob.glob(os.path.join(path_folder, '*.txt')))

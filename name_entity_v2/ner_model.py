@@ -4,6 +4,9 @@ import utils_nlp
 import utils_tf
 import time
 import pickle
+from sklearn.metrics.classification import classification_report
+from sklearn.metrics import confusion_matrix
+import codecs
 
 
 def BLSTM(input, hidden_state_dimension, initializer, sequence_length=None, output_sequence=True):
@@ -70,8 +73,7 @@ class BLSTM_CRF(object):
 
         self.verbose = True
         self.input_token_indices = tf.placeholder(tf.int32, [None], name="input_token_indices")
-        self.input_label_indices_vector = tf.placeholder(tf.float32, [None, dataset.number_of_classes],
-                                                         name="input_label_indices_vector")
+        # self.input_label_indices_vector = tf.placeholder(tf.float32, [None, dataset.number_of_classes],name="input_label_indices_vector")
         self.input_label_indices_flat = tf.placeholder(tf.int32, [None], name="input_label_indices_flat")
         self.input_token_character_indices = tf.placeholder(tf.int32, [None, None], name="input_token_indices")
         self.input_token_lengths = tf.placeholder(tf.int32, [None], name="input_token_lengths")
@@ -166,7 +168,7 @@ class BLSTM_CRF(object):
             b = tf.Variable(tf.constant(0.0, shape=[dataset.number_of_classes]), name="bias")
             scores = tf.nn.xw_plus_b(outputs, W, b, name="scores")
             self.unary_scores = scores
-            self.predictions = tf.argmax(self.unary_scores, 1, name="predictions")
+
             #             utils_tf.variable_summaries(W)
             #             utils_tf.variable_summaries(b)
             self.feedforward_variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=vs.name)
@@ -208,10 +210,13 @@ class BLSTM_CRF(object):
                 unary_scores_expanded, input_label_indices_flat_batch, sequence_lengths,
                 transition_params=self.transition_parameters)
             self.loss = tf.reduce_mean(-log_likelihood, name='cross_entropy_mean_loss')
-            self.accuracy = tf.constant(1)
+            # self.accuracy = tf.constant(1)
 
             self.crf_variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=vs.name)
 
+        self.predictions,_ = tf.contrib.crf.viterbi_decode(self.unary_scores,self.transition_parameters)
+        tf.add_to_collection(name="predictions",value=self.predictions)
+        # self.predict = tf.contrib.crf.viterbi_decode(self.unary_scores,self.transition_parameters)
         self.define_training_procedure(learning_rate=learning_rate, gradient_clipping_value=gradient_clipping_value,
                                        optimizer=optimizer)
         self.summary_op = tf.summary.merge_all()
@@ -237,6 +242,202 @@ class BLSTM_CRF(object):
         # By defining a global_step variable and passing it to the optimizer we allow TensorFlow handle the counting of training steps for us.
         # The global step will be automatically incremented by one every time you execute train_op.
         self.train_op = self.optimizer.apply_gradients(grads_and_vars, global_step=self.global_step)
+
+    def train_step(self,sess,token_indices, character_indices_padded, token_lengths, pattern ,label_indices , dropout_rate = 0.5 ):
+        for sequence_number in range(len(token_indices)):
+            feed_dict = {
+                self.input_token_indices: token_indices[sequence_number],
+                self.input_token_character_indices: character_indices_padded[sequence_number],
+                self.input_token_lengths: token_lengths[sequence_number],
+                self.input_token_patterns: pattern[sequence_number],
+
+                self.input_label_indices_flat: label_indices[sequence_number],
+                # self.input_label_indices_vector: label_vector[sequence_number],
+                self.dropout_keep_prob: 1 - dropout_rate,
+
+            }
+            _, loss, transition_params_trained = sess.run([self.train_op,  self.loss,  self.transition_parameters],feed_dict)
+            if sequence_number % 2000 ==0:
+                print('loss : ',loss)
+        return transition_params_trained
+
+    def predict_step(self,sess,token_indices,character_indices_padded,token_lengths,pattern):
+        feed_dict = {
+            self.input_token_indices: token_indices,
+            self.input_token_character_indices: character_indices_padded,
+            self.input_token_lengths: token_lengths,
+            self.input_token_patterns: pattern,
+            self.dropout_keep_prob: 1.,
+        }
+        # unary_scores, transition_params_trained = sess.run([self.unary_scores, self.transition_parameters], feed_dict)
+        #
+        # predictions, _ = tf.contrib.crf.viterbi_decode(unary_scores, transition_params_trained)
+        # tensor_pre,_ = tf.contrib.crf.viterbi_decode(self.unary_scores,self.transition_parameters)
+
+        predictions = sess.run(self.predictions,feed_dict)
+
+        predictions = predictions[1:-1]
+
+        assert (len(predictions) == len(token_indices))
+
+        return predictions
+    def predict(self,sess,token_indices, character_indices_padded, token_lengths, pattern ):
+        all_predictions = []
+        all_y_true = []
+        # output_filepath = os.path.join(stats_graph_folder, '{1:03d}_{0}.txt'.format(dataset_type,epoch_number))
+        # output_file = codecs.open(output_filepath, 'w', 'UTF-8')
+        # original_conll_file = codecs.open(dataset_filepaths[dataset_type], 'r', 'UTF-8')
+
+        for i in range(len(token_indices)):
+            feed_dict = {
+                self.input_token_indices: token_indices[i],
+                self.input_token_character_indices: character_indices_padded[i],
+                self.input_token_lengths: token_lengths[i],
+                self.input_token_patterns: pattern[i],
+                self.dropout_keep_prob: 1.,
+            }
+            # unary_scores, transition_params_trained = sess.run([self.unary_scores, self.transition_parameters], feed_dict)
+
+
+            # predictions, _ = tf.contrib.crf.viterbi_decode(unary_scores, transition_params_trained)
+            predictions = sess.run(self.predictions,feed_dict)
+            predictions = predictions[1:-1]
+
+            assert (len(predictions) == len(token_indices[i]))
+
+            all_predictions.append(predictions)
+        return all_predictions
+
+    def evaluate(self,sess,vocab,token_indices, character_indices_padded, token_lengths, pattern ,label_indices,datatype='train'):
+        all_predictions = []
+        all_y_true = []
+        # output_filepath = os.path.join(stats_graph_folder, '{1:03d}_{0}.txt'.format(dataset_type,epoch_number))
+        # output_file = codecs.open(output_filepath, 'w', 'UTF-8')
+        # original_conll_file = codecs.open(dataset_filepaths[dataset_type], 'r', 'UTF-8')
+
+        for i in range(len(token_indices)):
+            feed_dict = {
+                self.input_token_indices: token_indices[i],
+                self.input_token_character_indices: character_indices_padded[i],
+                self.input_token_lengths: token_lengths[i],
+                self.input_token_patterns: pattern[i],
+                self.dropout_keep_prob: 1.,
+            }
+            # unary_scores, transition_params_trained = sess.run([self.unary_scores, self.transition_parameters],
+            #                                                    feed_dict)
+            #
+            # predictions, _ = tf.contrib.crf.viterbi_decode(unary_scores, transition_params_trained)
+            predictions = sess.run(self.predictions,feed_dict)
+            predictions = predictions[1:-1]
+
+            assert (len(predictions) == len(token_indices[i]))
+
+            all_predictions.extend(predictions)
+            all_y_true.extend(label_indices[i])
+
+        label_predict = [vocab.labels[i] for i in all_predictions]
+        label_true = [vocab.labels[i] for i in all_y_true]
+
+        label_predict = utils_nlp.bioes_to_bio(label_predict)
+        label_true = utils_nlp.bioes_to_bio(label_true)
+
+        new_pre = []
+        new_true = []
+        for i in range(len(label_predict)):
+            if label_true[i]!='O' or label_predict[i]!='O':
+                new_pre.append(utils_nlp.remove_bio_from_label_name(label_predict[i]))
+                new_true.append(label_true[i] if label_true[i]=='O' else label_true[i][2:])
+        labels = [label if label=='O' else label[2:] for label in vocab.labels]
+        labels = list(set(labels))
+        report = classification_report(new_true,new_pre)
+
+        print('matrix')
+        matrix  = confusion_matrix(new_true,new_pre,labels)
+        file =codecs.open(datatype+'_evaluate.txt','w','utf-8')
+        file.writelines(' '.join(labels)+'\n\r')
+        for i,row in enumerate(matrix):
+            file.writelines(' '.join([str(i) for i in row])+'\n\r')
+        file.close()
+
+        print(matrix)
+        print(report)
+        return report
+
+    def load_token_embedding(self,sess,vocab,token_to_vector,dim):
+        embedding = vocab.get_embedding(token_to_vector,dim)
+        sess.run(self.token_embedding_weights.assign(embedding))
+
+    def load_model(self,sess,pathfile):
+        utils_tf.resize_tensor_variable(sess, self.token_embedding_weights, [None, None])
+        utils_tf.resize_tensor_variable(sess, self.character_embedding_weights, [None, None])
+        self.saver.restore(sess, pathfile)
+
+        # self.graph = tf.get_default_graph()
+        # self.predictions = self.graph.get_tensor_by_name('predictions:0')
+    def update_model(self,sess,pathfile,vocab):
+        utils_tf.resize_tensor_variable(sess, self.token_embedding_weights, [None, None])
+        utils_tf.resize_tensor_variable(sess, self.character_embedding_weights, [None, None])
+        self.saver.restore(sess, pathfile)
+        token_embedding_weights = sess.run(self.token_embedding_weights.read_value())
+
+    def export_model(self,sess,export_folder):
+        builder = tf.saved_model.builder.SavedModelBuilder(export_folder)
+
+        # Build the signature_def_map.
+
+        tensor_input_token_indices = tf.saved_model.utils.build_tensor_info(self.input_token_indices)
+
+        # tensor_input_label_indices_vector = tf.saved_model.utils.build_tensor_info(self.in)
+
+        tensor_token_character_indices = tf.saved_model.utils.build_tensor_info(self.input_token_character_indices)
+
+        tensor_input_token_lengths = tf.saved_model.utils.build_tensor_info(self.input_token_lengths)
+
+        tensor_input_label_indices_flat = tf.saved_model.utils.build_tensor_info(self.input_label_indices_flat)
+
+        tensor_dropout_keep_prob = tf.saved_model.utils.build_tensor_info(self.dropout_keep_prob)
+
+        tensor_input_token_patterns = tf.saved_model.utils.build_tensor_info(self.input_token_patterns)
+
+        # predictions = tf.contrib.crf.viterbi_decode(model.unary_scores,model.transition_parameters)[1:-1]
+        # tensor_unary_scores = tf.saved_model.utils.build_tensor_info(model.unary_scores)
+        # tensor_transitions = tf.saved_model.utils.build_tensor_info(model.transition_parameters)
+        tensor_predictions = tf.saved_model.utils.build_tensor_info(self.predictions)
+
+        # tensor_output = tf.saved_model.utils.build_tensor_info(tf.reduce_max(model.input_token_lengths))
+
+        prediction_signature = (
+            tf.saved_model.signature_def_utils.build_signature_def(
+                inputs={
+                    'input_token_indices': tensor_input_token_indices,
+                    # 'input_label_indices_vector':tensor_input_label_indices_vector,
+                    'token_character_indices': tensor_token_character_indices,
+                    'input_token_lengths': tensor_input_token_lengths,
+                    # 'input_label_indices_flat':tensor_input_label_indices_flat,
+                    'dropout_keep_prob': tensor_dropout_keep_prob,
+                    'input_token_patterns': tensor_input_token_patterns
+                },
+                outputs={
+                    'predictions': tensor_predictions
+                },
+                method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME))
+
+
+        legacy_init_op = tf.group(tf.tables_initializer(), name='legacy_init_op')
+        builder.add_meta_graph_and_variables(
+            sess, [tf.saved_model.tag_constants.SERVING],
+            signature_def_map={
+                'predictions':
+                    prediction_signature,
+                tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
+                    prediction_signature,
+            },
+            legacy_init_op=legacy_init_op)
+
+        builder.save()
+
+        print('Done exporting!')
+
 
     def load_pretrained_token_embeddings(self, sess, dataset, embedding_filepath='', token_to_vector=None,
                                          check_lowercase=True, check_digits=True):

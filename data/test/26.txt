@@ -1,0 +1,42 @@
+Uber Self-Driving Program's Fate Unclear As It Lets California Test Permit Lapse
+The future of Uber’s self-driving vehicle program is increasingly murky as the company has told California it won’t be renewing a permit to test robotic cars in the state. This news comes after Arizona suspended the rideshare company’s AV program there following a fatal collision with a pedestrian.
+
+Uber last week announced that it was halting all testing of autonomous vehicles on public roads in Arizona, California, Pittsburgh and Toronto after the March 18 accident that killed Elaine Herzberg, 49, as she crossed a dark street in Tempe, Arizona. The California Department of Motor Vehicles sent a letter to Uber on March 27 confirming the company’s decision.
+
+“Uber has indicated that it will not renew its current permit to test autonomous vehicles in California. By the terms of its current permit, Uber’s authority to test autonomous vehicles on California public roads will end on March 31, 2018,” Brian Soublet, chief counsel for the California DMV said in the letter to Austin Heyworth, Uber's public affairs manager.
+
+
+Should Uber at some future date want to restart testing in California, not only will it need a new permit, the company “will need to address any follow-up analysis or investigations from the recent crash in Arizona and may also require a meeting with the department,” Soublet said.
+
+The Arizona accident is the first known fatality involving a pedestrian and an autonomous vehicle, and a black eye for the Uber program that was working to get back on track after a high-profile legal fight involving stolen trade secrets with Alphabet Inc.’s Waymo. Federal investigators and Tempe's police department are studying the accident to determine if Uber’s self-driving Volvo XC90 SUV had malfunctioning sensors, software, computers or an entirely different flaw.
+
+Recommended by Forbes
+“To regain public trust Uber has to come out and explain exactly what happened in Arizona and how it’s going to fix it," said Grayson Brulte, an autonomous tech industry consultant based in Beverly Hills.
+
+"You really have to wonder what is the long-term roadmap for Uber's program? Does (CEO Dara Khosrowshahi) shut this down or hit the reset button and rebuild it from the ground up? And if so, does Uber partner with a big OEM rather than do it alone?"
+
+Uber didn’t respond to a question about whether Khosrowshahi remains fully committed to the program, but confirmed the decision not to renew its California permit at this time.
+
+"We proactively suspended our self-driving operations, including in California, immediately following the Tempe incident,” Uber said in an emailed statement. “Given this, we decided to not reapply for a California DMV permit with the understanding that our self-driving vehicles would not operate on public roads in the immediate future."
+
+In the wake of the Uber accident, Nvidia said today that it too was halting public roads tests of its self-driving vehicles. The company currently has just four cars registered for the AV program, according to the California DMV. Likewise, Toyota suspended tests of its autonomous vehicles on public roads in California and Michigan last week and has not yet resumed them, said John Hanson, a company spokesman.
+
+Waymo, which today announced an autonomous vehicle partnership with Jaguar in addition to its program with FCA to get Pacifica Hybrid minivans, has continued its U.S. testing and has General Motors’ Cruise unit. NuTonomy, the self-driving tech unit acquired by Aptiv, has just restarted testing its robot cars in the Boston area after a brief suspension.
+
+“Testing resumed today in Boston following a review of our program and its safety protocols with city officials,” the company told Forbes in an emailed statement.
+
+Arizona Governor Doug Ducey, who welcomed Uber’s self-driving vehicles to the state in late 2016, this week rescinded the rideshare company’s ability to test there. In a March 26 letter to CEO Khosrowshahi, Ducey said he’d directed the state’s Department of Transportation to “suspend Uber’s ability to test and operate autonomous vehicles on Arizona’s public roadways.” In addition to its fleet of more than 150 automated Volvo XC90 SUVs testing in and around Phoenix, Uber also stopped testing its self-driving semi-trucks in the state.
+
+Uber’s Volvo test vehicle was loaded with sensors, including LiDAR and radar that can see pedestrians and objects in dark or in light. And even if the LiDAR, which shoots out pulsed laser beams to create 3D, 360-degree images of a vehicle’s surroundings, failed, the radar should have detected the metal bicycle that Herzberg was pushing.
+
+
+For now, it's hard to assess the broader impact of the crash on other developers of autonomous technology, Karl Iagnemma, nuTonomy's CEO, said Tuesday at the NADA 2018 Global Automotive Forum in New York.
+
+“It does shine some light on some of these questions about the uniformity of practices,” he said, such as how many human safety drivers are in the test vehicles and there use of redundant sensors and other equipment. For its part, nuTonomy takes a "real belt and suspenders approach to safety,” in terms of backup systems and heavy use of simulated testing, Iagnemma said.
+
+The real risk is the threat "the public comes out of this with a partially formed view of autonomy," he said.
+
+With reporting assistance from Joann Muller in New York and Sam Abuelsamid in San Jose. 
+
+
+Alan Ohnsman covers technology-driven changes reshaping transportation. Follow him on Twitter. Have tips to share with Forbes anonymously? Click here.

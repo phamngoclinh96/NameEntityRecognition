@@ -1,0 +1,54 @@
+Facebook:Organization
+Data Brokers:Product
+Launches New User Privacy Tools:Product
+Facebook FB:Product
+Facebook:Organization
+Facebook:Organization
+Acxiom:Product
+Epsilon Data Management:Organization
+Oracle ’s Data Cloud:Product
+Acxiom:Exploit_Kit
+Facebook:Organization
+Carolyn Everson:Person_name
+Facebook:Organization
+Facebook:Organization
+Facebook:Organization
+Graham Mudd:Person_name
+Facebook:Organization
+U.S.:Location
+Federal Trade Commission:Organization
+Cambridge Analytica:Organization
+Facebook:Organization
+Cambridge Analytica:Organization
+Donald Trump:Person_name
+Facebook:Organization
+Facebook:Organization
+Mark Zuckerberg:Person_name
+Privacy Shortcuts:Product
+Access Your Information:Product
+Facebook:Organization
+Facebook:Organization
+Facebook:Organization
+Facebook:Organization
+Facebook:Organization
+Facebook:Organization
+Zuckerberg:Person_name
+Facebook:Organization
+Facebook:Organization
+Cambridge Analytica:Organization
+Zuckerberg:Person_name
+Cambridge Analytica:Organization
+Zuckerberg:Person_name
+Facebook:Organization
+Facebook:Organization
+Facebook:Organization
+Facebook:Organization
+Cambridge Analytica:Organization
+Cambridge Analytica:Organization
+Facebook:Organization
+The Guardian:Organization
+The New York Times:Organization
+Cambridge Analytica:Organization
+Facebook:Organization
+Facebook:Organization
+
